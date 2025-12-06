@@ -1,0 +1,920 @@
+/* =========================================
+   BASE STYLES & THEME
+========================================= */
+:root {
+    --bg-color: #121212;
+    --fg-color: #E0E0E0;
+    --accent-color: #ffffff;
+    --shadow-dark: #050505;
+    --shadow-light: #202020;
+    --font-family: 'Nunito', sans-serif;
+    --transition: 0.3s ease;
+    --font-weight-regular: 400;
+    --font-weight-semi: 600;
+    --font-weight-bold: 700;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    background: radial-gradient(circle at top, #1c1c1c 0%, #080808 55%, #020202 100%);
+    color: var(--fg-color);
+    font-family: var(--font-family);
+    font-weight: var(--font-weight-regular);
+    line-height: 1.6;
+    cursor: none; /* custom cursor */
+    opacity: 0;           /* fade in/out base */
+    transition: opacity 0.3s ease;
+}
+
+/* page is ready (set by JS) */
+body.page-loaded {
+    opacity: 1;
+}
+
+/* Keep normal cursor for text inputs just in case */
+input,
+textarea {
+    cursor: text;
+}
+
+/* Utility container */
+.container {
+    width: min(1100px, 92vw);
+    margin: 0 auto;
+}
+
+/* =========================================
+   INFINITE WAVE BACKGROUND
+========================================= */
+.infinite-wave-container {
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    background: radial-gradient(circle at 10% 0%, #262626 0, transparent 50%),
+                radial-gradient(circle at 90% 100%, #181818 0, transparent 52%);
+    opacity: 0.9;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.infinite-wave-container::before {
+    content: "";
+    position: absolute;
+    inset: -20%;
+    background: conic-gradient(
+        from 0deg,
+        rgba(255, 255, 255, 0.04),
+        transparent,
+        rgba(255, 255, 255, 0.025),
+        transparent
+    );
+    animation: wave-spin 20s linear infinite;
+    animation-play-state: running;
+    will-change: transform;
+}
+
+/* Pause background animation while scrolling for performance */
+body.is-scrolling .infinite-wave-container::before {
+    animation-play-state: paused;
+}
+
+@keyframes wave-spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+/* =========================================
+   CUSTOM CURSOR
+========================================= */
+.custom-cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.7);
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    z-index: 999;
+    mix-blend-mode: difference;
+    transition:
+        width 0.15s ease-out,
+        height 0.15s ease-out,
+        background-color 0.15s ease-out,
+        border-color 0.15s ease-out;
+}
+
+.custom-cursor.is-hovering {
+    width: 30px;
+    height: 30px;
+    background-color: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.9);
+}
+
+/* =========================================
+   NEUMORPHIC CARDS
+========================================= */
+.neumorphism {
+    background: rgba(10, 10, 10, 0.9);
+    border-radius: 1.25rem;
+    box-shadow:
+        14px 14px 26px var(--shadow-dark),
+        -10px -10px 24px #1c1c1c;
+    backdrop-filter: blur(18px);
+}
+
+.neumorphism-light {
+    background: rgba(10, 10, 10, 0.85);
+    border-radius: 1.25rem;
+    box-shadow:
+        8px 10px 24px rgba(0, 0, 0, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+/* Glow on hover for project cards etc. */
+.hover-glow {
+    transition:
+        transform var(--transition),
+        box-shadow var(--transition),
+        filter var(--transition);
+}
+
+.hover-glow:hover {
+    transform: translateY(-4px);
+    box-shadow:
+        0 0 18px rgba(255, 255, 255, 0.08),
+        0 16px 40px rgba(0, 0, 0, 0.7);
+    filter: brightness(1.05);
+}
+
+.hover-scale {
+    transition:
+        transform var(--transition),
+        box-shadow var(--transition),
+        filter var(--transition);
+}
+
+.hover-scale:hover {
+    transform: scale(1.04);
+    box-shadow:
+        4px 4px 10px var(--shadow-dark),
+        -4px -4px 10px var(--shadow-light);
+    filter: brightness(1.1);
+}
+
+/* =========================================
+   HEADER & NAV
+========================================= */
+.site-header {
+    position: relative;
+    z-index: 2;
+    padding-top: 1.5rem;
+}
+
+.nav-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: min(1100px, 92vw);
+    margin: 0 auto;
+    padding: 0.75rem 1.25rem;
+}
+
+.nav-logo {
+    font-weight: var(--font-weight-bold);
+    font-size: 1.2rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--fg-color);
+}
+
+.nav-menu {
+    list-style: none;
+    display: flex;
+    gap: 1.4rem;
+}
+
+.nav-menu a {
+    font-size: 0.9rem;
+    font-weight: var(--font-weight-semi);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--fg-color);
+    text-decoration: none;
+    padding-bottom: 0.25rem;
+    border-bottom: 1px solid transparent;
+    transition: color var(--transition), border-color var(--transition), opacity var(--transition);
+}
+
+.nav-menu a:hover {
+    color: var(--accent-color);
+    border-color: rgba(255, 255, 255, 0.4);
+    opacity: 1;
+}
+
+/* =========================================
+   HERO SECTION
+========================================= */
+.hero {
+    padding: 4.5rem 1.5rem 3.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* higher on the page */
+}
+
+.hero-content {
+    width: min(850px, 100%);
+    margin: 0 auto;
+    text-align: center;
+}
+
+.hero-kicker {
+    font-size: 0.85rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    opacity: 0.75;
+    margin-bottom: 0.75rem;
+}
+
+.hero-title {
+    font-size: clamp(2.2rem, 4vw, 2.8rem);
+    font-weight: var(--font-weight-bold);
+    line-height: 1.1;
+    margin-bottom: 0.6rem;
+}
+
+.hero-tagline {
+    font-size: 1rem;
+    opacity: 0.9;
+    margin-bottom: 0.75rem;
+}
+
+.hero-subtitle {
+    font-size: 0.95rem;
+    opacity: 0.8;
+}
+
+/* subtle entrance animation */
+.hero {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.hero.hero-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* =========================================
+   ABOUT SECTION
+========================================= */
+.about-section {
+    margin-top: 2.5rem;
+    padding: 2.25rem 2rem;
+}
+
+.about-section h2 {
+    font-size: 1.6rem;
+    margin-bottom: 1.5rem;
+    text-align: center; /* title centered */
+}
+
+.about-content {
+    display: grid;
+    grid-template-columns: minmax(0, 220px) minmax(0, 1fr);
+    gap: 1.75rem;
+    align-items: center;
+    justify-content: center;
+}
+
+.about-image {
+    width: 100%;
+    max-width: 220px;
+    border-radius: 999px;
+    display: block;
+    margin: 0 auto;
+    object-fit: cover;
+}
+
+.about-text {
+    max-width: 700px;
+    margin: 0;
+    text-align: left;
+}
+
+.about-text p + p {
+    margin-top: 0.75rem;
+}
+
+/* =========================================
+   PROJECTS SECTION (HOME)
+========================================= */
+.work-section {
+    margin-top: 2.75rem;
+    padding: 2.25rem 2rem 2.4rem;
+}
+
+.work-header {
+    text-align: center;
+    margin-bottom: 1.75rem;
+}
+
+.work-header h2 {
+    font-size: 1.8rem;
+    margin-bottom: 0.4rem;
+}
+
+.work-subtitle {
+    font-size: 0.95rem;
+    opacity: 0.8;
+}
+
+.project-list {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-top: 0.5rem;
+}
+
+.project {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1.15rem;
+    background: radial-gradient(circle at top, #222222 0%, #101010 55%);
+    box-shadow: 10px 18px 40px rgba(0, 0, 0, 0.9);
+}
+
+.project a {
+    display: block;
+    padding: 1.25rem 1.1rem 1.35rem;
+    text-decoration: none;
+    color: var(--fg-color);
+}
+
+.project img {
+    width: 100%;
+    border-radius: 0.9rem;
+    margin-bottom: 0.9rem;
+    display: block;
+    object-fit: cover;
+}
+
+.project h3 {
+    font-size: 1rem;
+    font-weight: var(--font-weight-semi);
+}
+
+/* =========================================
+   SECTION REVEAL ANIMATIONS (HOME)
+========================================= */
+.section-hidden {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+.section-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* =========================================
+   FOOTER
+========================================= */
+.site-footer {
+    margin: 3rem auto 2rem;
+    text-align: center;
+    padding: 1.5rem 1rem 0.5rem;
+    font-size: 0.85rem;
+    opacity: 0.8;
+}
+
+.social-links {
+    list-style: none;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 1rem;
+    padding: 0;
+}
+
+.social-links li a {
+    font-weight: var(--font-weight-bold);
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--fg-color);
+    opacity: 0.85;
+    border-bottom: 1px solid transparent;
+    padding-bottom: 0.15rem;
+    transition: color var(--transition), opacity var(--transition), border-color var(--transition);
+}
+
+.social-links li a:hover {
+    opacity: 1;
+    color: var(--accent-color);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+/* =========================================
+   CIRCLE PAGE TRANSITION (LEGACY)
+========================================= */
+.circle-transition {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    background: radial-gradient(circle at center, #ffffff 0%, #c8c8c8 30%, #000000 80%);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 998;
+}
+
+/* =========================================
+   RESPONSIVE ADJUSTMENTS (HOME)
+========================================= */
+@media (max-width: 768px) {
+    .nav-bar {
+        padding-inline: 1rem;
+    }
+
+    .hero {
+        padding-top: 3.4rem;
+        padding-bottom: 2.8rem;
+    }
+
+    .about-section,
+    .work-section {
+        padding-inline: 1.3rem;
+    }
+
+    .about-content {
+        grid-template-columns: 1fr;
+        text-align: left;
+    }
+
+    .about-image {
+        max-width: 180px;
+    }
+}
+
+/* =========================================
+   PROJECT DETAIL PAGES
+========================================= */
+body.project-page {
+    background: radial-gradient(circle at top, #181818 0%, #050505 50%, #020202 100%);
+}
+
+/* Main project card */
+.project-page .project-detail {
+    width: min(1000px, 92vw);
+    margin: 3rem auto 3.5rem;
+    padding: 2.25rem 2rem 2.4rem;
+    background: rgba(10, 10, 10, 0.96);
+    border-radius: 1.5rem;
+    box-shadow:
+        14px 18px 40px rgba(0, 0, 0, 0.9),
+        -6px -6px 26px rgba(32, 32, 32, 0.65);
+    backdrop-filter: blur(16px);
+
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.project-page .project-detail.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Header (title + meta) */
+.project-page .project-detail-header {
+    margin-bottom: 1.8rem;
+    text-align: center;
+}
+
+.project-page .project-detail-header h1 {
+    font-size: 1.9rem;
+    margin-bottom: 0.2rem;
+}
+
+.project-page .project-meta {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+/* -----------------------------------------
+   TAB BUTTONS (Technical / Sound)
+----------------------------------------- */
+.project-page .project-tabs {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    padding: 0.25rem;
+    border-radius: 999px;
+    background: radial-gradient(circle at top, #262626 0%, #101010 60%);
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.75),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+    width: fit-content;
+    margin: 0 auto 1.8rem;
+}
+
+.project-page .tab-button {
+    border: none;
+    outline: none;
+    padding: 0.55rem 1.6rem;
+    border-radius: 999px;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition:
+        color 0.25s ease,
+        background 0.25s ease,
+        box-shadow 0.25s ease,
+        transform 0.15s ease;
+}
+
+.project-page .tab-button:hover {
+    transform: translateY(-1px);
+}
+
+.project-page .tab-button.is-active {
+    background: linear-gradient(135deg, #ffffff, #b3b3b3);
+    color: #000;
+    box-shadow:
+        0 10px 22px rgba(0, 0, 0, 0.75),
+        0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+
+.project-page .tab-button:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+}
+
+/* -----------------------------------------
+   TAB PANELS
+----------------------------------------- */
+.project-page .tab-panels {
+    margin-top: 0.4rem;
+}
+
+.project-page .tab-panel {
+    display: none;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+}
+
+.project-page .tab-panel.is-active {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Section titles inside project tabs */
+.project-page .section-title {
+    font-size: 1.15rem;
+    margin-bottom: 0.7rem;
+    text-align: center;
+}
+
+/* -----------------------------------------
+   TECHNICAL TAB LAYOUT – 2x2 grid
+   Row1: Trailer | Gallery
+   Row2: Overview | My contributions
+----------------------------------------- */
+
+/* The whole technical tab becomes a 2x2 grid ONLY when active */
+.project-page #technical.tab-panel.is-active {
+    display: grid;
+    grid-template-columns: minmax(0, 3.2fr) minmax(0, 1.8fr);
+    grid-template-areas:
+        "trailer gallery"
+        "overview contributions";
+    column-gap: 2rem;
+    row-gap: 1.75rem;
+}
+
+/* Make sure technical tab takes up NO space when hidden */
+.project-page #technical.tab-panel:not(.is-active) {
+    display: none !important;
+}
+
+/* Flatten inner wrappers so children can sit directly on grid areas */
+.project-page .technical-layout {
+    display: contents;
+}
+
+.project-page #technical .project-description {
+    display: contents;
+}
+
+.project-page #technical .project-overview-layout {
+    display: contents;
+}
+
+/* Grid area assignments */
+.project-page #technical .technical-layout > div:first-child {
+    grid-area: trailer;
+}
+
+.project-page #technical .technical-layout > div:last-child {
+    grid-area: gallery;
+}
+
+.project-page #technical .project-overview-text {
+    grid-area: overview;
+}
+
+.project-page #technical .project-overview-list {
+    grid-area: contributions;
+}
+
+/* Video frame */
+.project-page .project-video-frame {
+    position: relative;
+    width: 100%;
+    border-radius: 1rem;
+    overflow: hidden;
+    background: #000;
+    box-shadow:
+        0 18px 40px rgba(0, 0, 0, 0.9),
+        0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+.project-page .project-video-frame video {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+/* Gallery – bigger and more spaced images */
+.project-page .project-gallery {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.1rem;
+}
+
+.project-page .project-gallery img {
+    width: 100%;
+    border-radius: 0.9rem;
+    display: block;
+    object-fit: cover;
+    box-shadow: 0 12px 26px rgba(0, 0, 0, 0.8);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.project-page .project-gallery img:hover {
+    transform: translateY(-2px) scale(1.02);
+    filter: brightness(1.05);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.9);
+}
+
+/* Overview + contributions */
+.project-page .project-description .section-title {
+    text-align: left;
+    margin-bottom: 0.9rem;
+}
+
+.project-page .project-overview-text {
+    font-size: 1rem;
+    line-height: 1.7;
+}
+
+.project-page .project-overview-text p + p {
+    margin-top: 0.8rem;
+}
+
+.project-page .project-overview-list {
+    font-size: 0.95rem;
+}
+
+.project-page .project-overview-points {
+    list-style: disc;
+    padding-left: 1.1rem;
+}
+
+.project-page .project-overview-points li {
+    margin-bottom: 0.4rem;
+    line-height: 1.5;
+}
+
+/* -----------------------------------------
+   SOUND TAB LAYOUT
+----------------------------------------- */
+.project-page .sound-panel {
+    margin-top: 0.4rem;
+    max-width: 850px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.project-page .sound-intro {
+    font-size: 0.95rem;
+    opacity: 0.88;
+    margin-bottom: 1.3rem;
+    text-align: justify;
+}
+
+.project-page .sound-tracklist {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+}
+
+.project-page .sound-track {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 2fr);
+    gap: 0.75rem;
+    align-items: center;
+    padding: 0.8rem 1rem;
+    border-radius: 1rem;
+    background: radial-gradient(circle at top left, #222222 0%, #111111 55%);
+    box-shadow:
+        0 10px 26px rgba(0, 0, 0, 0.9),
+        0 0 0 1px rgba(255, 255, 255, 0.03);
+}
+
+.project-page .sound-track-main {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.project-page .sound-track-title {
+    font-weight: 600;
+}
+
+.project-page .sound-track-meta {
+    font-size: 0.8rem;
+    opacity: 0.7;
+}
+
+.project-page .sound-track audio {
+    width: 100%;
+    height: 32px;
+}
+
+/* =========================================
+   IMAGE LIGHTBOX (gallery click)
+========================================= */
+.image-lightbox-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1000;
+    transition: opacity 0.25s ease;
+}
+
+.image-lightbox-overlay.is-open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.image-lightbox-inner {
+    position: relative;
+    max-width: min(960px, 92vw);
+    max-height: 88vh;
+    padding: 1.4rem 1.8rem 1.6rem;
+    border-radius: 1.2rem;
+    background: radial-gradient(circle at top, #222222 0%, #050505 55%);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.image-lightbox-img {
+    max-width: 100%;
+    max-height: calc(88vh - 2.8rem);
+    border-radius: 0.9rem;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.9);
+    transform: scale(0.96);
+    opacity: 0;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.image-lightbox-overlay.is-open .image-lightbox-img {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Big clear X, on top of the image */
+.image-lightbox-close {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.9rem;
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+    border: none;
+    background: #000;
+    color: #ffffff;
+    font-size: 1.7rem;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.85);
+    z-index: 2;
+    transition:
+        background 0.2s ease,
+        transform 0.15s ease,
+        box-shadow 0.2s ease;
+}
+
+.image-lightbox-close:hover {
+    background: #111;
+    transform: translateY(-1px);
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.9);
+}
+
+/* Blur + lock background when lightbox is open and show normal cursor */
+body.image-lightbox-open {
+    overflow: hidden;
+    cursor: auto;
+}
+
+body.image-lightbox-open .custom-cursor {
+    display: none;
+}
+
+body.image-lightbox-open.project-page .site-header,
+body.image-lightbox-open.project-page .project-detail,
+body.image-lightbox-open.project-page .site-footer {
+    filter: blur(6px);
+    transition: filter 0.25s ease;
+}
+
+/* =========================================
+   PROJECT DETAIL RESPONSIVE
+========================================= */
+@media (max-width: 900px) {
+    .project-page #technical.tab-panel.is-active {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "trailer"
+            "gallery"
+            "overview"
+            "contributions";
+    }
+
+    .project-page .sound-track {
+        grid-template-columns: 1fr;
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 600px) {
+    .project-page .project-detail {
+        padding-inline: 1.4rem;
+        padding-top: 1.8rem;
+    }
+
+    .project-page .project-detail-header h1 {
+        font-size: 1.6rem;
+    }
+
+    .project-page .project-tabs {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .project-page .tab-button {
+        flex: 1;
+        text-align: center;
+        padding-inline: 0.8rem;
+    }
+}
