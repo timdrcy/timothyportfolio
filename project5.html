@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="Demure · Technical prototyping and sound design breakdown.">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:400,600,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/style.css"/>
+    <title>Demure | Project</title>
+</head>
+<body class="project-page is-transitioning">
+    <div class="custom-cursor"></div>
+    <div class="circle-transition is-active"></div>
+
+    <header class="site-header">
+        <nav class="nav-bar neumorphism">
+            <a class="nav-logo" href="index.html">TD</a>
+            <ul class="nav-menu">
+                <li><a href="index.html#about">About</a></li>
+                <li><a href="index.html#projects">Projects</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="project-detail">
+            <header class="project-detail-header">
+                <h1>Demure</h1>
+                <p class="project-meta">Technical Prototyping &amp; Sound Design · Unity</p>
+            </header>
+
+            <div class="project-tabs">
+                <button class="tab-button is-active" data-tab-target="technical">Technical</button>
+                <button class="tab-button" data-tab-target="sound">Sound</button>
+            </div>
+
+            <div class="tab-panels">
+                <section id="technical" class="tab-panel is-active">
+                    <div class="technical-layout">
+                        <div>
+                            <h2 class="section-title">Trailer</h2>
+                            <div class="project-video-frame">
+                                <video controls src="videos/project5-video.mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h2 class="section-title">Gallery</h2>
+                            <div class="project-gallery">
+                                <img src="images/sunflowerr(dem).PNG" alt="Demure screenshot 1">
+                                <img src="images/maps(dem).PNG" alt="Demure screenshot 2">
+                                <img src="images/usp(dem).PNG" alt="Demure screenshot 3">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="project-description">
+                        <div class="project-overview-layout">
+                            <div class="project-overview-text">
+                                <h2 class="section-title">Overview</h2>
+                                <p>
+                                    Together with two designers, three artists, and one engineer, we created the story of Lily, a young girl
+                                    dealing with neglect and abuse who finds strength by confronting nightmare creatures that embody her fears.
+                                </p>
+                                <p>
+                                    To support this narrative, I researched depression, mental health, and how dreams and the surreal can reflect
+                                    our inner state. I also worked on more technical sound design with FMOD implementation, as well as level
+                                    design and power mechanics to closely align gameplay with Lily's emotional journey.
+                                </p>
+                            </div>
+                            <aside class="project-overview-list">
+                                <h2 class="section-title">My contributions</h2>
+                                <ul class="project-overview-points">
+                                    <li>Narrative</li>
+                                    <li>Research</li>
+                                    <li>Game Design Document</li>
+                                    <li>Technical sound design and FMOD implementation</li>
+                                    <li>Level design and design of power / ability mechanics</li>
+                                    <li>Implementation of power / ability mechanics</li>
+                                </ul>
+                            </aside>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="sound" class="tab-panel">
+                    <div class="sound-panel">
+                        <p class="sound-intro">
+                             A selection of tracks produced for Demure
+                        </p>
+
+                        <div class="sound-tracklist">
+                            <article class="sound-track">
+                                <div class="sound-track-main">
+                                    <span class="sound-track-title">SunflowerFields Theme</span>
+                                    <span class="sound-track-meta"></span>
+                                </div>
+                                <audio controls src="audio/project5-Sunflowerfields.wav"></audio>
+                            </article>
+
+                            <article class="sound-track">
+                                <div class="sound-track-main">
+                                    <span class="sound-track-title">Observatory Theme</span>
+                                    <span class="sound-track-meta"></span>
+                                </div>
+                                <audio controls src="audio/project5-ObservatoryTheme.wav"></audio>
+                            </article>
+
+                            <article class="sound-track">
+                                <div class="sound-track-main">
+                                    <span class="sound-track-title">ClockworkGarden Theme</span>
+                                    <span class="sound-track-meta"></span>
+                                </div>
+                                <audio controls src="audio/project5-ClockworkGarden.wav"></audio>
+                            </article>
+
+                               <article class="sound-track">
+                                <div class="sound-track-main">
+                                    <span class="sound-track-title">Boss Theme</span>
+                                    <span class="sound-track-meta"></span>
+                                </div>
+                                <audio controls src="audio/project5-BossTheme.wav"></audio>
+                            </article>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer container">
+        <p>&copy; 2025 Timothy Darcy. All rights reserved.</p>
+    </footer>
+
+    <script src="scripts/main.js"></script>
+</body>
+</html>

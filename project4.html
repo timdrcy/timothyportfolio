@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="DadsDayOut · Technical prototyping and sound design breakdown.">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:400,600,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/style.css"/>
+    <title>DadsDayOut | Project</title>
+</head>
+<body class="project-page is-transitioning">
+    <div class="custom-cursor"></div>
+    <div class="circle-transition is-active"></div>
+
+    <header class="site-header">
+        <nav class="nav-bar neumorphism">
+            <a class="nav-logo" href="index.html">TD</a>
+            <ul class="nav-menu">
+                <li><a href="index.html#about">About</a></li>
+                <li><a href="index.html#projects">Projects</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="project-detail">
+            <header class="project-detail-header">
+                <h1>DadsDayOut</h1>
+                <p class="project-meta">Technical Prototyping &amp; Sound Design · Unity</p>
+            </header>
+
+            <!-- Tabs -->
+            <div class="project-tabs">
+                <button class="tab-button is-active" data-tab-target="technical">Technical</button>
+                <button class="tab-button" data-tab-target="sound">Sound</button>
+            </div>
+
+            <div class="tab-panels">
+                <!-- TECHNICAL TAB -->
+                <section id="technical" class="tab-panel is-active">
+                    <div class="technical-layout">
+                        <!-- Video -->
+                        <div>
+                            <h2 class="section-title">Trailer</h2>
+                            <div class="project-video-frame">
+                                <video controls src="videos/project4-video.mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                            </div>
+                        </div>
+
+                        <!-- Image gallery -->
+                        <div>
+                            <h2 class="section-title">Gallery</h2>
+                            <div class="project-gallery">
+                                <img src="images/screen1(ddd).PNG" alt="DadsDayOut screenshot 1">
+                                <img src="images/screen2(ddd).PNG" alt="DadsDayOut screenshot 2">
+                                <img src="images/phone(ddd).PNG" alt="DadsDayOut screenshot 3">
+                                <img src="images/watering(ddd).PNG" alt="DadsDayOut screenshot 4">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="project-description">
+                        <div class="project-overview-layout">
+                            <div class="project-overview-text">
+                                <h2 class="section-title">Overview</h2>
+                                <p>
+                                    "Dad's Day Out" was created in a small team over three weeks to explore modern fatherhood through play.
+                                    I did extensive research into fathers' experiences, different parenting styles, and how to recreate a
+                                    believable family home.
+                                </p>
+                                <p>
+                                    I also created the game's design document to give the artists a clear visual direction and guide the
+                                    programmer on mechanics. On top of that, I helped design and prototype simple interactive systems,
+                                    including minigames like watering plants and playing the in-game Game Boy, and I composed the music to
+                                    support the game's warm, everyday tone.
+                                </p>
+                            </div>
+                            <aside class="project-overview-list">
+                                <h2 class="section-title">My contributions</h2>
+                                <ul class="project-overview-points">
+                                    <li>Research</li>
+                                    <li>Game Design Document</li>
+                                    <li>Design/Prototype Mechanics</li>
+                                    <li>Testing</li>
+                                    <li>Sound Design</li>
+                                </ul>
+                            </aside>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SOUND TAB -->
+                <section id="sound" class="tab-panel">
+                    <div class="sound-panel">
+                        <p class="sound-intro">
+                            A selection of tracks produced for DadsDayOut
+                        </p>
+
+                        <div class="sound-tracklist">
+                            <article class="sound-track">
+                                <div class="sound-track-main">
+                                    <span class="sound-track-title">Main Theme</span>
+                                    <span class="sound-track-meta"></span>
+                                </div>
+                                <audio controls src="audio/project4-maintheme.wav"></audio>
+                            </article>
+
+                            <article class="sound-track">
+                                <div class="sound-track-main">
+                                    <span class="sound-track-title">Lobby Theme</span>
+                                    <span class="sound-track-meta"></span>
+                                </div>
+                                <audio controls src="audio/project4-lobby.wav"></audio>
+                            </article>
+
+                            <article class="sound-track">
+                                <div class="sound-track-main">
+                                    <span class="sound-track-title">Gameboy Theme</span>
+                                    <span class="sound-track-meta"></span>
+                                </div>
+                                <audio controls src="audio/project4-Gameboy.wav"></audio>
+                            </article>
+
+                             <article class="sound-track">
+                                <div class="sound-track-main">
+                                    <span class="sound-track-title">EndGame Theme</span>
+                                    <span class="sound-track-meta"></span>
+                                </div>
+                                <audio controls src="audio/project4-EndGame.wav"></audio>
+                            </article>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer container">
+        <p>&copy; 2025 Timothy Darcy. All rights reserved.</p>
+    </footer>
+
+    <script src="scripts/main.js"></script>
+</body>
+</html>

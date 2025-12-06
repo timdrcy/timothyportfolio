@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="IceAge · Technical prototyping and sound design breakdown.">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:400,600,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/style.css"/>
+    <title>IceAge | Project</title>
+</head>
+<body class="project-page is-transitioning">
+    <div class="custom-cursor"></div>
+    <div class="circle-transition is-active"></div>
+
+    <header class="site-header">
+        <nav class="nav-bar neumorphism">
+            <a class="nav-logo" href="index.html">TD</a>
+            <ul class="nav-menu">
+                <li><a href="index.html#about">About</a></li>
+                <li><a href="index.html#projects">Projects</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="project-detail">
+            <header class="project-detail-header">
+                <h1>IceAge</h1>
+                <p class="project-meta">Technical Prototyping &amp; Sound Design · Unity</p>
+            </header>
+
+            <div class="project-tabs">
+                <button class="tab-button is-active" data-tab-target="technical">Technical</button>
+                <button class="tab-button" data-tab-target="sound">Sound</button>
+            </div>
+
+            <div class="tab-panels">
+                <section id="technical" class="tab-panel is-active">
+                    <div class="technical-layout">
+                        <div>
+                            <h2 class="section-title">Trailer</h2>
+                            <div class="project-video-frame">
+                                <video controls src="videos/project6-video.mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h2 class="section-title">Gallery</h2>
+                            <div class="project-gallery">
+                                <img src="images/level1img(I).PNG" alt="IceAge screenshot 1">
+                                <img src="images/level2(I).PNG" alt="IceAge screenshot 2">
+                                <img src="images/Basecolor(I).png" alt="IceAge screenshot 3">
+                                <img src="images/level3texture(I).PNG" alt="IceAge screenshot 4">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="project-description">
+                        <div class="project-overview-layout">
+                            <div class="project-overview-text">
+                                <h2 class="section-title">Overview</h2>
+                                <p>
+                                    This was the last game I worked on during my second year of university, which took me seven weeks to complete.
+                                    Our client was a class of 5th graders, and we had to turn their drawing of monsters into an actual game.
+                                    We had three artists, two engineers and two designers working on the design together.
+                                </p>
+                                <p>
+                                    I focused on game design and level design, working on the mechanics of the characters and their movement to make
+                                    the monsters feel lively and fun to control. I also worked on texturing using Substance 3D Designer and composed
+                                    the music for the game. On top of that, I helped test the game and communicated with the client to make sure we
+                                    stayed true to the kids' ideas. The end result is a fun puzzle game where you guide your monster buddies through
+                                    different landscapes and eventually beat the boss. The work not only showcases our technical and creative
+                                    capabilities, it also shows how we work together in a team and on a tight deadline.
+                                </p>
+                            </div>
+                            <aside class="project-overview-list">
+                                <h2 class="section-title">My contributions</h2>
+                                <ul class="project-overview-points">
+                                    <li>Game design and level design</li>
+                                    <li>Character mechanics and movement design</li>
+                                    <li>Texturing work using Substance 3D Designer</li>
+                                    <li>Sound Design</li>
+                                    <li>Playtesting and client communication with the 5th-grade class</li>
+                                </ul>
+                            </aside>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="sound" class="tab-panel">
+                    <div class="sound-panel">
+                        <p class="sound-intro">
+                             A selection of tracks produced for IceAge
+                        </p>
+
+                        <div class="sound-tracklist">
+                            <article class="sound-track">
+                                <div class="sound-track-main">
+                                    <span class="sound-track-title">Tutorial Theme</span>
+                                    <span class="sound-track-meta"></span>
+                                </div>
+                                <audio controls src="audio/project6-Tutorial.wav"></audio>
+                            </article>
+
+                            <article class="sound-track">
+                                <div class="sound-track-main">
+                                    <span class="sound-track-title">MainMenu Theme</span>
+                                    <span class="sound-track-meta"></span>
+                                </div>
+                                <audio controls src="audio/project6-MainMenu.wav"></audio>
+                            </article>
+
+                            <article class="sound-track">
+                                <div class="sound-track-main">
+                                    <span class="sound-track-title">Level 1 Theme</span>
+                                    <span class="sound-track-meta"></span>
+                                </div>
+                                <audio controls src="audio/project6-Level1.wav"></audio>
+                            </article>
+
+                             <article class="sound-track">
+                                <div class="sound-track-main">
+                                    <span class="sound-track-title">Level 2 Theme</span>
+                                    <span class="sound-track-meta"></span>
+                                </div>
+                                <audio controls src="audio/project6-Level2.wav"></audio>
+                            </article>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer container">
+        <p>&copy; 2025 Timothy Darcy. All rights reserved.</p>
+    </footer>
+
+    <script src="scripts/main.js"></script>
+</body>
+</html>
