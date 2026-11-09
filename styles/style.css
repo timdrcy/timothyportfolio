@@ -15,3 +15,395 @@
 @media(max-width:680px){.wrap{width:calc(100% - 32px)}.site-header{padding-top:16px}.brand-name{display:none}.main-nav{gap:24px}.main-nav a{font-size:13px}.home-hero{grid-template-columns:1fr;min-height:0;padding-top:22px}.hero-copy{padding:16px 8px 4px}.hero-copy h1{font-size:clamp(60px,13vw,85px)}.hero-summary{max-width:100%}.hero-showcase{height:255px;min-height:0;margin:8px -4px 12px}.float-card{height:175px;width:42%;top:15%}.float-dad{left:4%}.float-ice{left:31%;width:42%;height:205px;top:4%}.float-demure{left:69%}.projects-section{padding-top:10px}.project-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.card-bottom{padding:12px 10px}.card-bottom small{font-size:9px}.card-bottom strong{font-size:14px}.card-arrow{display:none}.section-heading h2{font-size:32px}.about-section{padding-top:18px}.about-card{grid-template-columns:1fr;padding:22px;gap:20px}.portrait-slot{height:180px;width:170px}.site-footer{flex-direction:column}.project-banner{height:250px}.banner-art{left:20%}.banner-ink{width:74%}.banner-title{padding:22px;max-width:82%}.project-banner h1{font-size:clamp(44px,10vw,72px)}.project-lead{flex-direction:column;align-items:stretch}.segmented{align-self:flex-start}.project-info-grid{grid-template-columns:1fr;gap:26px}.contributions{grid-row:2}.project-gallery{grid-template-columns:repeat(2,minmax(0,1fr))}.screenshots-heading{align-items:flex-start;flex-direction:column;gap:4px;margin-bottom:12px}.audio-track{grid-template-columns:1fr;gap:10px}.sound-heading{align-items:flex-start}.sound-number{white-space:nowrap}}
 @media(max-width:380px){.project-grid{grid-template-columns:1fr}.card-art{aspect-ratio:1.75}.float-card{height:140px}.float-ice{height:170px}.hero-showcase{height:215px}.project-banner h1{font-size:41px}.tab-button{min-width:96px;padding-inline:15px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}.page-wipe{display:none!important}}
+
+
+/* ============================================================================
+   2026 REFINEMENT — restrained typography, open artwork, tactile interactions
+   ============================================================================ */
+:root {
+  --ease-out: cubic-bezier(.22,1,.36,1);
+  --ease-slide: cubic-bezier(.72,0,.18,1);
+  --accent-click: #af91ee;
+}
+
+/* Light lifted-paper surfaces and curved lighting, not a space/particle effect. */
+body.home-page {
+  background:
+    radial-gradient(ellipse 65% 27% at 18% 8%, rgba(55,40,82,.31), transparent 82%),
+    radial-gradient(ellipse 55% 34% at 91% 64%, rgba(28,53,83,.22), transparent 80%),
+    #0b0c13;
+}
+.ambient {
+  background: none;
+}
+.ambient i {
+  filter: none;
+  opacity: .7;
+  background: radial-gradient(ellipse, rgba(96,69,147,.15) 0%, rgba(30,55,87,.07) 51%, transparent 75%);
+  animation-duration: 34s;
+  will-change: transform;
+}
+.ambient i:last-child {animation-duration: 43s}
+.home-page .hero-showcase::after {
+  content: "";
+  position: absolute;
+  z-index: -2;
+  inset: 9% 6% 12%;
+  border-radius: 43% 57% 46% 54% / 51% 36% 64% 49%;
+  transform: rotate(-14deg);
+  background: linear-gradient(130deg, rgba(76,58,121,.25), rgba(41,70,115,.18) 55%, transparent);
+  pointer-events: none;
+}
+
+/* The designer's name is the only title that keeps a full stop.
+   Slight positive kerning and a small optical rise balance the 'y.' tail. */
+.hero-copy h1 {letter-spacing: -.068em}
+.title-period {
+  display: inline-block;
+  margin-left: .10em;
+  font-size: .82em;
+  line-height: 0;
+  vertical-align: .035em;
+  transform: translateY(-.017em);
+  color: #b59cea;
+}
+.hero-role {
+  max-width: 390px;
+  font-size: clamp(18px,1.85vw,23px);
+  line-height: 1.45;
+  margin: 7px 0 28px;
+  color: #e6e4ee;
+  font-weight: 450;
+  letter-spacing: -.015em;
+}
+.hero-copy {padding-bottom: 36px}
+.section-heading {margin-bottom: 22px}
+.section-heading h2 {margin: 0; font-size: clamp(30px, 3.1vw, 42px)}
+.about-heading {margin-bottom: 19px}
+.about-section .about-copy p:first-of-type {margin-top:0}
+.about-section .about-card {background: linear-gradient(125deg,rgba(43,41,59,.93),rgba(22,26,41,.94))}
+.project-card, .primary-button, .float-card, .tab-button, .gallery-item, .next-project a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* On hover, project illustrations behave like real links. */
+.float-card {cursor: pointer}
+.float-card:focus-visible {outline:3px solid #c4a5fc;outline-offset:5px}
+.float-card:active {filter:brightness(1.12);box-shadow:0 12px 25px #0008}
+.project-card:active {transform: translateY(-1px) scale(.98)}
+.primary-button:active {transform: translateY(0) scale(.965);box-shadow:0 3px 10px #0006}
+.main-nav a:active, .about-links a:active, .next-project a:active {color:#fff;opacity:.7}
+.card-arrow {transition:background .25s,transform .35s var(--ease-out)}
+.project-card:hover .card-arrow {background:var(--project-accent);color:#111;transform:rotate(45deg)}
+.project-card:active .card-arrow {transform:rotate(45deg) scale(.82)}
+
+/* Project art belongs to the entire page backdrop, not an image container. */
+.project-page .ambient {
+  background:
+    radial-gradient(ellipse 60% 46% at 75% 4%,color-mix(in srgb,var(--project-deep) 65%,transparent),transparent 80%);
+}
+.project-breadcrumb {margin:15px 0 4px}
+.project-banner {
+  height:370px;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  overflow:visible;
+  isolation:isolate;
+  align-items:center;
+}
+.project-banner::before {
+  content:"";
+  position:absolute;
+  z-index:-3;
+  top:0;bottom:-20px;
+  left:calc((100% - 100vw)/2);
+  right:calc((100% - 100vw)/2);
+  background:
+    radial-gradient(ellipse 50% 92% at 78% 25%, color-mix(in srgb,var(--project-deep) 80%,transparent), transparent 86%),
+    linear-gradient(90deg, #0b0c13, color-mix(in srgb,var(--project-deep) 40%,#0b0c13) 77%, #0b0c13);
+  pointer-events:none;
+}
+.banner-art {
+  top:-8px;
+  bottom:-5px;
+  left:35%;
+  right:calc((100% - 100vw)/2);
+  overflow:hidden;
+  z-index:-2;
+  opacity:.93;
+  mask-image:linear-gradient(90deg,transparent 0%,#000 25%,#000 81%,transparent 100%);
+}
+.banner-art img {
+  object-fit:cover;
+  object-position:center 45%;
+  height:100%;width:100%;
+}
+.banner-art:after {
+  background:
+    linear-gradient(0deg,#0b0c13 0%,transparent 27%),
+    linear-gradient(90deg,rgba(11,12,19,.78),transparent 62%);
+}
+.banner-ink {
+  top:0;bottom:0;height:auto;
+  left:calc((100% - 100vw)/2);
+  width:74%;
+  clip-path:none;
+  background:linear-gradient(90deg,#0b0c13 10%,color-mix(in srgb,var(--project-deep) 35%,#0b0c13) 68%,transparent 100%);
+}
+.banner-title {
+  max-width: min(660px,65%);
+  padding: 29px 0 36px 8px;
+}
+.project-banner h1 {margin:0 0 15px;line-height:.93;letter-spacing:-.055em}
+.project-banner .banner-title p {font-size:14px;letter-spacing:.01em}
+.banner-placeholder {
+  background:linear-gradient(130deg,rgba(56,90,80,.15),rgba(29,53,58,.38));
+}
+.project-lead {padding-top:12px}
+.block-heading {gap:0}
+.block-heading span {display:none}
+.screenshots-block {margin-top:40px}
+.sound-heading h2 {margin:0 0 12px}
+.sound-heading {padding-bottom:22px}
+.next-project {margin-top:48px;justify-content:flex-end}
+.next-project a {transition:color .24s,transform .32s var(--ease-out);display:inline-flex;align-items:center;gap:9px}
+.next-project a:hover {transform:translateX(6px)}
+.gallery-item:active {transform:translateY(0) scale(.97)}
+.tab-button {transition:color .3s,transform .22s var(--ease-out)}
+.tab-button:active {transform:scale(.91)}
+.segmented-thumb {box-shadow: 0 2px 11px color-mix(in srgb,var(--project-accent) 25%,transparent)}
+.segmented:has(.tab-button:active) .segmented-thumb {filter:brightness(1.2)}
+.tab-panel {animation:panel-enter .52s var(--ease-out) both}
+@keyframes panel-enter {from{opacity:0;transform:translate3d(0,26px,0)}to{opacity:1;transform:none}}
+
+/* Music playback glows only while sound is playing. No audio waveform polling. */
+.audio-track {
+  position:relative;
+  border-radius:13px;
+  margin-inline:-13px;
+  padding-inline:13px;
+  transition:background-color .35s,border-color .35s,box-shadow .35s;
+}
+.audio-track.is-playing {
+  background: color-mix(in srgb,var(--project-accent) 10%,#191923);
+  border-bottom-color: var(--project-accent);
+  box-shadow: inset 3px 0 var(--project-accent);
+}
+.audio-track.is-playing .track-title strong {color:#fff}
+.audio-track .track-title strong {transition:color .2s}
+.audio-track audio {filter:none; accent-color:var(--project-accent)}
+.audio-track .track-status {
+  font-size:11px;color:var(--project-accent);font-weight:700;
+  display:inline-flex;align-items:center;gap:8px;opacity:0;
+  transform:translateY(5px);
+  transition:opacity .26s,transform .26s;
+}
+.audio-track.is-playing .track-status {opacity:1;transform:translateY(0)}
+.sound-bars {display:inline-flex;align-items:center;gap:2px;height:13px}
+.sound-bars i {height:5px;width:2px;background:var(--project-accent);border-radius:2px}
+.is-playing .sound-bars i {animation:bar-dance .72s ease-in-out infinite alternate}
+.is-playing .sound-bars i:nth-child(2) {animation-delay:-.38s}
+.is-playing .sound-bars i:nth-child(3) {animation-delay:-.17s}
+@keyframes bar-dance {from{height:3px}to{height:13px}}
+
+/* One-shot reveals: no scroll handler or running animation loop. */
+.motion-enabled .reveal-item {
+  opacity:0;
+  translate:0 25px;
+  transition:opacity .74s var(--ease-out),translate .74s var(--ease-out);
+  transition-delay:var(--reveal-delay,0ms);
+}
+.motion-enabled .reveal-item.is-seen {opacity:1;translate:0 0}
+.hero-copy > * {animation:hero-rise .75s var(--ease-out) both}
+.hero-copy > :nth-child(2) {animation-delay:.07s}
+.hero-copy > :nth-child(3) {animation-delay:.13s}
+.hero-copy > :nth-child(4) {animation-delay:.20s}
+@keyframes hero-rise {from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.float-card {animation:art-rise .8s var(--ease-out) both}
+.float-ice {animation-delay:.12s}
+.float-demure {animation-delay:.21s}
+@keyframes art-rise {from{opacity:0;translate:0 30px}to{opacity:1;translate:0 0}}
+
+/* Vertical PowerPoint-style screen slide where cross-document view transitions
+   are supported (Chromium). No external libraries and no continuous JS.
+   The old screen rises while the next screen arrives from below. */
+@view-transition { navigation: none; }
+::view-transition-old(root) {
+  animation: page-old-up .62s var(--ease-slide) both;
+}
+::view-transition-new(root) {
+  animation: page-new-up .62s var(--ease-slide) both;
+}
+@keyframes page-old-up {from{transform:translateY(0)}to{transform:translateY(-100%)}}
+@keyframes page-new-up {from{transform:translateY(100%)}to{transform:translateY(0)}}
+/* Fallback when cross-document view transitions aren't available. */
+.page-wipe {background:linear-gradient(140deg,#252139,#141b2c)}
+.page-wipe.is-exiting {animation-duration:.5s}
+.page-wipe.is-entering {animation-duration:.58s}
+
+@media(max-width:680px) {
+  .hero-copy {padding-bottom: 0}
+  .hero-role {margin-bottom:22px}
+  .title-period {margin-left:.11em}
+  .project-banner {height:290px}
+  .banner-art {left:15%;right:calc((100% - 100vw)/2)}
+  .banner-ink {width:88%;background:linear-gradient(90deg,#0b0c13 4%,color-mix(in srgb,var(--project-deep) 35%,#0b0c13) 45%,transparent 100%)}
+  .banner-title {max-width:82%;padding-left:4px}
+  .project-banner h1 {font-size:clamp(43px,11vw,72px)}
+  .project-lead {padding-top:4px}
+  .audio-track {margin-inline:0;padding-inline:10px}
+}
+@media(prefers-reduced-motion:reduce) {
+  .motion-enabled .reveal-item {opacity:1;translate:none}
+  .hero-copy > *, .float-card {animation:none!important}
+  ::view-transition-old(root),::view-transition-new(root) {animation-duration:.01ms!important}
+  .sound-bars i {animation:none!important}
+}
+
+/* Final viewport corrections after rendering on narrow screens. */
+.project-banner::before {bottom:0}
+.banner-art {bottom:0}
+.project-lead {position:relative;z-index:2}
+@media(max-width:680px) {
+  .hero-showcase {overflow:clip}
+  .float-demure {left:61%;width:38%;transform:rotate(7deg)}
+  .float-demure:hover {transform:rotate(5deg) translateY(-6px)}
+  .project-lead {padding-top:22px}
+}
+
+
+/* =====================================================================
+   MOTION + FINISHING PASS · November 2026
+   PowerPoint-style sheet slide works with file:// AND GitHub Pages.
+   All motion transforms/opacity; reduced-motion users get no motion.
+   Artwork is never AI-redrawn: layered CSS masks feather the source.
+   ===================================================================== */
+:root { --slide-ease: cubic-bezier(.76,0,.20,1); --play-ease: cubic-bezier(.2,.85,.2,1); }
+
+/* Remove unused arrows, strengthen the simple typography. */
+.project-card .card-arrow, .primary-button > span[aria-hidden], .about-links a[href*="soundcloud"] {display:none!important}
+.primary-button{justify-content:center;min-width:174px;letter-spacing:-.015em}
+.site-footer{font-size:15px;color:#bbb9cb;align-items:center;padding:27px 0 35px}
+.site-footer div{gap:32px}
+.site-footer a{display:inline-block;color:#e7e4ef;font-size:15px;font-weight:650;letter-spacing:-.015em;position:relative;transition:color .25s var(--play-ease),transform .25s var(--play-ease)}
+.site-footer a::after{content:"";position:absolute;bottom:-5px;left:0;width:100%;height:1px;background:#b79cef;transform:scaleX(0);transform-origin:left;transition:transform .32s var(--play-ease)}
+.site-footer a:hover{color:#ceb6ff;transform:translateY(-2px)}
+.site-footer a:hover::after{transform:scaleX(1)}
+.block-heading{font-size:clamp(23px,2.3vw,28px);margin-bottom:22px;letter-spacing:-.035em;line-height:1.1}
+.contributions .block-heading{font-size:clamp(22px,2vw,26px);margin-bottom:16px}
+.sound-heading h2{font-size:clamp(27px,3vw,36px)}
+.screenshots-block{margin-top:51px}
+.screenshots-heading{margin-bottom:19px}
+/* Thumb switch: finger-friendly, visibly sliding, with a more legible type size. */
+.segmented{padding:5px;border-radius:17px;box-shadow:0 8px 25px #0005,inset 0 1px #ffffff17}
+.segmented-thumb{top:5px;left:5px;bottom:5px;width:calc((100% - 10px)/2);border-radius:12px;transition:transform .46s var(--play-ease),background-color .3s}
+.tab-button{min-width:145px;font-size:16px;padding:14px 30px;border-radius:12px;font-weight:700;letter-spacing:-.025em}
+.tab-button:hover:not(.is-active){color:#fff;background:#ffffff0c}
+.tab-button:focus-visible{outline:2px solid #fff;outline-offset:4px}
+/* The original illustrations extend past the header and feather out on ALL sides.
+   A radial alpha mask removes the rectangular cutoff without touching source pixels. */
+.project-banner{height:385px}
+.project-banner::before{background:
+  radial-gradient(ellipse 60% 102% at 77% 43%,color-mix(in srgb,var(--project-deep) 65%,transparent),transparent 84%),
+  linear-gradient(90deg,#0b0c13,color-mix(in srgb,var(--project-deep) 30%,#0b0c13) 70%,#0b0c13)}
+.banner-art{top:-51px;bottom:-48px;left:31%;right:calc((100% - 100vw)/2);overflow:visible;opacity:.96;
+  -webkit-mask-image:linear-gradient(to right, transparent 0%,#000 28%,#000 78%,transparent 100%),linear-gradient(to bottom,transparent 0%,#000 23%,#000 66%,transparent 100%);
+  mask-image:linear-gradient(to right, transparent 0%,#000 28%,#000 78%,transparent 100%),linear-gradient(to bottom,transparent 0%,#000 23%,#000 66%,transparent 100%);
+  mask-composite:intersect; -webkit-mask-composite:source-in}
+.banner-art::after{background:radial-gradient(ellipse 77% 69% at 60% 48%,transparent 32%,#0b0c1340 100%),linear-gradient(90deg,#0b0c13bb,transparent 68%)}
+.banner-art img{width:100%;height:100%;object-fit:cover;object-position:center 47%}
+.banner-ink{background:linear-gradient(90deg,#0b0c13 9%,color-mix(in srgb,var(--project-deep) 28%,#0b0c13) 60%,transparent 100%)}
+.banner-title{position:relative;z-index:2}
+/* Fine inner accent and soft motion, not large glowing UI boxes. */
+.project-banner h1{animation:title-lift .84s var(--play-ease) both;animation-delay:.1s}
+.project-banner .banner-title p{animation:title-lift .85s var(--play-ease) both;animation-delay:.22s}
+.project-breadcrumb{animation:title-lift .6s var(--play-ease) both}
+.project-lead{animation:title-lift .8s var(--play-ease) both;animation-delay:.26s}
+@keyframes title-lift{from{opacity:0;transform:translateY(36px)}to{opacity:1;transform:translateY(0)}}
+/* Ambient feature cards float gently while still responding to hover. */
+.float-card.is-bobbing{animation:gentle-hover 7s ease-in-out infinite;animation-fill-mode:both}
+.float-dad.is-bobbing{animation-duration:8.1s;animation-delay:-1.1s}
+.float-demure.is-bobbing{animation-duration:9.3s;animation-delay:-4.2s}
+.float-ice.is-bobbing{animation-duration:7.5s;animation-delay:-2s}
+@keyframes gentle-hover{0%,100%{translate:0 0}50%{translate:0 -13px}}
+/* Larger, clearly visible entrances for cards and sections. */
+.motion-enabled .reveal-item{translate:0 53px;opacity:0;transition:translate .9s var(--play-ease),opacity .85s ease;transition-delay:var(--reveal-delay,0ms)}
+.motion-enabled .reveal-item.is-seen{translate:0 0;opacity:1}
+.project-card{transition:transform .42s var(--play-ease),border-color .3s,box-shadow .42s var(--play-ease)}
+.project-card:hover{transform:translateY(-10px) scale(1.018);box-shadow:0 23px 47px #0009,0 0 0 1px var(--project-accent)}
+.project-card:active{transform:translateY(-3px) scale(.974)}
+.project-card .card-art img{transition:transform .7s var(--play-ease)}
+.project-card:hover .card-art img{transform:scale(1.075)}
+.float-card:hover{filter:brightness(1.08)}
+.main-nav a{position:relative;padding-bottom:8px}
+.main-nav a::after{content:"";position:absolute;bottom:0;left:0;right:0;height:2px;background:#b49ceb;transform:scaleX(0);transform-origin:left;transition:transform .3s var(--play-ease)}
+.main-nav a:hover::after,.main-nav a:focus-visible::after{transform:scaleX(1)}
+/* User-triggered feedback: ripple creates a visible click point. */
+.project-card,.primary-button,.tab-button,.gallery-item,.track-play{position:relative}
+.tap-ripple{position:absolute;pointer-events:none;z-index:50;width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,.34);translate:-50% -50%;scale:0;animation:tap-wave .56s ease-out both;mix-blend-mode:screen}
+@keyframes tap-wave{0%{scale:0;opacity:.7}75%{opacity:.3}100%{scale:15;opacity:0}}
+/* Audio has both native controls AND a clearly clickable preview button. */
+.track-title{gap:3px}
+.track-play{align-self:flex-start;border:1px solid color-mix(in srgb,var(--project-accent) 55%,#fff2);background:color-mix(in srgb,var(--project-accent) 15%,#15151c);color:#f9f7fa;display:inline-flex;align-items:center;justify-content:center;gap:9px;margin-top:10px;padding:9px 16px;min-width:112px;border-radius:999px;cursor:pointer;font-size:13px;font-weight:750;transition:transform .22s var(--play-ease),background .25s,border-color .25s,box-shadow .25s}
+.track-play:hover{transform:translateY(-2px);background:color-mix(in srgb,var(--project-accent) 24%,#15151c);box-shadow:0 6px 18px color-mix(in srgb,var(--project-accent) 18%,transparent)}
+.track-play:active{transform:scale(.94)}
+.track-play .play-icon{font-size:14px;line-height:1;width:14px}
+.audio-track.is-playing{background:color-mix(in srgb,var(--project-accent) 14%,#191923);box-shadow:inset 4px 0 var(--project-accent),0 10px 32px #0004;transition:background .3s,box-shadow .4s}
+.audio-track.is-playing .track-play{background:var(--project-accent);color:#0e0d11;border-color:var(--project-accent)}
+.audio-track.is-playing::after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:12px;border:1px solid var(--project-accent);opacity:.4;animation:audio-breathe 2.3s ease-in-out infinite}
+@keyframes audio-breathe{50%{opacity:.8}}
+/* Actual page transitions on local files and hosted pages: upward sheet + content movement. */
+.page-wipe{background:linear-gradient(150deg,#231d35 0%,#151a2b 63%,#0b0c13 100%);border-top:2px solid rgba(196,157,254,.8);z-index:3000}
+.page-wipe.is-exiting{visibility:visible;transform:translateY(100%);animation:slide-cover .67s var(--slide-ease) forwards}
+.page-wipe.is-entering{visibility:visible;transform:translateY(0);animation:slide-uncover .74s var(--slide-ease) both}
+@keyframes slide-cover{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@keyframes slide-uncover{from{transform:translateY(0)}to{transform:translateY(-101%)}}
+.site-header,main,.site-footer{transition:transform .64s var(--slide-ease),opacity .48s ease}
+body.is-departing .site-header,body.is-departing main,body.is-departing .site-footer{transform:translateY(-85px);opacity:.08}
+body.is-arriving .site-header,body.is-arriving main,body.is-arriving .site-footer{animation:arrive-from-below .78s var(--play-ease) both}
+@keyframes arrive-from-below{from{transform:translateY(82px);opacity:.15}to{transform:translateY(0);opacity:1}}
+/* On section links (About, Projects) leave navigation unchanged and smooth-scroll. */
+.tab-viewport.is-switching{overflow:hidden;transition:height .57s var(--play-ease)}
+.tab-panel.is-active{animation:content-slide-in .53s var(--play-ease) both}
+@keyframes content-slide-in{from{opacity:0;transform:translateY(36px)}to{opacity:1;transform:translateY(0)}}
+.gallery-item:hover{transform:translateY(-6px) scale(1.017)}
+/* Mobile: feather art without a sharp vertical edge, scale touch targets. */
+@media(max-width:680px){
+  .project-banner{height:305px}
+  .banner-art{top:-25px;bottom:-34px;left:6%;right:calc((100% - 100vw)/2);opacity:.72;
+    -webkit-mask-image:linear-gradient(to right,transparent 0%,#000 40%,#000 77%,transparent 100%),linear-gradient(to bottom,transparent 0%,#000 26%,#000 63%,transparent 100%);
+    mask-image:linear-gradient(to right,transparent 0%,#000 40%,#000 77%,transparent 100%),linear-gradient(to bottom,transparent 0%,#000 26%,#000 63%,transparent 100%);
+    mask-composite:intersect; -webkit-mask-composite:source-in}
+  .banner-ink{width:93%;background:linear-gradient(90deg,#0b0c13 9%,#0b0c13ad 61%,transparent)}
+  .tab-button{min-width:120px;padding:13px 18px;font-size:15px}
+  .segmented{align-self:flex-start}
+  .block-heading{font-size:24px}
+  .contributions .block-heading{font-size:23px}
+  .site-footer{font-size:14px}
+  .site-footer a{font-size:15px}
+}
+@media(max-width:380px){.tab-button{min-width:115px;padding-inline:14px;font-size:14px}}
+@media(prefers-reduced-motion:reduce){
+  .page-wipe{display:none!important}
+  .float-card.is-bobbing,.audio-track.is-playing::after{animation:none!important}
+  body.is-departing .site-header,body.is-departing main,body.is-departing .site-footer{transform:none;opacity:1}
+  body.is-arriving .site-header,body.is-arriving main,body.is-arriving .site-footer{animation:none}
+  .motion-enabled .reveal-item{translate:none!important;opacity:1!important}
+}
+
+/* Final edge blending: feather the ENTIRE backdrop beyond the title area.
+   There is no card edge, artificial crop line, or AI repaint of game art. */
+.project-banner::before {
+  top:-75px;
+  bottom:-115px;
+  -webkit-mask-image:linear-gradient(to bottom, transparent 0%, #000 17%, #000 55%, transparent 100%);
+  mask-image:linear-gradient(to bottom, transparent 0%, #000 17%, #000 55%, transparent 100%);
+}
+.banner-art { top:-65px;bottom:-122px; }
+.banner-ink { bottom:-52px; }
+@media(max-width:680px) {
+  .project-banner::before {top:-28px;bottom:-88px}
+  .banner-art{top:-25px;bottom:-90px}
+  .banner-ink{bottom:-22px}
+}
