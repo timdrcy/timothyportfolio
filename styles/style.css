@@ -228,20 +228,6 @@ body.home-page {
 /* Vertical PowerPoint-style screen slide where cross-document view transitions
    are supported (Chromium). No external libraries and no continuous JS.
    The old screen rises while the next screen arrives from below. */
-@view-transition { navigation: none; }
-::view-transition-old(root) {
-  animation: page-old-up .62s var(--ease-slide) both;
-}
-::view-transition-new(root) {
-  animation: page-new-up .62s var(--ease-slide) both;
-}
-@keyframes page-old-up {from{transform:translateY(0)}to{transform:translateY(-100%)}}
-@keyframes page-new-up {from{transform:translateY(100%)}to{transform:translateY(0)}}
-/* Fallback when cross-document view transitions aren't available. */
-.page-wipe {background:linear-gradient(140deg,#252139,#141b2c)}
-.page-wipe.is-exiting {animation-duration:.5s}
-.page-wipe.is-entering {animation-duration:.58s}
-
 @media(max-width:680px) {
   .hero-copy {padding-bottom: 0}
   .hero-role {margin-bottom:22px}
@@ -353,16 +339,6 @@ body.home-page {
 .audio-track.is-playing .track-play{background:var(--project-accent);color:#0e0d11;border-color:var(--project-accent)}
 .audio-track.is-playing::after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:12px;border:1px solid var(--project-accent);opacity:.4;animation:audio-breathe 2.3s ease-in-out infinite}
 @keyframes audio-breathe{50%{opacity:.8}}
-/* Actual page transitions on local files and hosted pages: upward sheet + content movement. */
-.page-wipe{background:linear-gradient(150deg,#231d35 0%,#151a2b 63%,#0b0c13 100%);border-top:2px solid rgba(196,157,254,.8);z-index:3000}
-.page-wipe.is-exiting{visibility:visible;transform:translateY(100%);animation:slide-cover .67s var(--slide-ease) forwards}
-.page-wipe.is-entering{visibility:visible;transform:translateY(0);animation:slide-uncover .74s var(--slide-ease) both}
-@keyframes slide-cover{from{transform:translateY(100%)}to{transform:translateY(0)}}
-@keyframes slide-uncover{from{transform:translateY(0)}to{transform:translateY(-101%)}}
-.site-header,main,.site-footer{transition:transform .64s var(--slide-ease),opacity .48s ease}
-body.is-departing .site-header,body.is-departing main,body.is-departing .site-footer{transform:translateY(-85px);opacity:.08}
-body.is-arriving .site-header,body.is-arriving main,body.is-arriving .site-footer{animation:arrive-from-below .78s var(--play-ease) both}
-@keyframes arrive-from-below{from{transform:translateY(82px);opacity:.15}to{transform:translateY(0);opacity:1}}
 /* On section links (About, Projects) leave navigation unchanged and smooth-scroll. */
 .tab-viewport.is-switching{overflow:hidden;transition:height .57s var(--play-ease)}
 .tab-panel.is-active{animation:content-slide-in .53s var(--play-ease) both}
@@ -407,3 +383,83 @@ body.is-arriving .site-header,body.is-arriving main,body.is-arriving .site-foote
   .banner-art{top:-25px;bottom:-90px}
   .banner-ink{bottom:-22px}
 }
+
+/* Navigation snapshots move together along the route's axis. */
+:root {
+  --settle: cubic-bezier(.22,.78,.18,1);
+  --travel: cubic-bezier(.45,.05,.19,1);
+  --route-x: 0%;
+  --route-y: 100%;
+  background-color: #0b0c13;
+}
+html[data-route="return"] { --route-y: -100%; }
+html[data-route="next"] { --route-x: 100%; --route-y: 0%; }
+html[data-route="previous"] { --route-x: -100%; --route-y: 0%; }
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition { navigation: auto; }
+  ::view-transition-old(root) { animation: sheet-out 490ms var(--travel) both; }
+  ::view-transition-new(root) { animation: sheet-in 490ms var(--travel) both; }
+  ::view-transition-group(game-art) { animation-duration: 490ms; animation-timing-function: var(--travel); }
+  ::view-transition-image-pair(game-art) { overflow:hidden; border-radius:12px; }
+  ::view-transition-old(game-art), ::view-transition-new(game-art) { height:100%; object-fit:cover; }
+}
+@keyframes sheet-out { to { transform:translate(calc(-.46 * var(--route-x)),calc(-.46 * var(--route-y))); opacity:.55; } }
+@keyframes sheet-in { from { transform:translate(var(--route-x),var(--route-y)); } }
+body.home-page { isolation:isolate; background:#080c15; }
+.home-page .ambient { background:#080c15; }
+.home-page .ambient i { display:none; }
+.home-page .ambient::before {
+  content:""; position:absolute; inset:-3%;
+  background: url("images/home-mist.webp") center / cover no-repeat;
+  animation: mist-drift 48s ease-in-out infinite alternate;
+}
+@keyframes mist-drift { to { transform:translate(1.5%,-1%) scale(1.025); } }
+@media (max-width:680px), (prefers-reduced-motion:reduce) {
+  .home-page .ambient::before { animation:none; inset:0; }
+}
+.segmented { display:inline-grid; grid-template-columns:repeat(2,1fr); }
+.segmented-thumb { background:#9dbbfa; transition:transform 360ms cubic-bezier(.23,.9,.23,1.05); }
+.tab-viewport.is-switching { transition:height 360ms var(--settle); }
+.tab-panel.is-active { animation:panel-glide 320ms var(--settle) both; }
+#sound { --panel-x:12px; }
+@keyframes panel-glide { from { opacity:.25; transform:translateX(var(--panel-x,-12px)); } }
+.motion-enabled .reveal-item { translate:0 16px; transition-duration:450ms; }
+.motion-enabled .reveal-item:focus-within { opacity:1; translate:none; }
+.project-card:active, .primary-button:active, .tab-button:active, .gallery-item:active { scale:.98; }
+.project-card, .primary-button, .tab-button, .gallery-item { transition-property: transform,scale,border-color,opacity,translate; }
+.next-project a {
+  display:grid; grid-template-columns:1fr 32px; gap:4px 28px;
+  align-items:center; padding:15px 20px; min-width:min(230px,100%);
+  color:#edf2ff; background:#151e30; border:1px solid #34425a; border-radius:14px;
+  transition:transform 220ms var(--settle),background 220ms,border-color 220ms;
+}
+.next-project small { font-size:11px; font-weight:600; color:#a8b6cf; letter-spacing:.06em; }
+.next-project strong { grid-row:2; font-size:18px; }
+.next-project svg { grid-column:2; grid-row:1/3; width:24px; transition:transform 240ms var(--settle); }
+.next-project a:hover { transform:translateY(-2px); color:white; border-color:#728ab4; background:#1d2b43; }
+.next-project a:hover svg { transform:translateX(4px); }
+.next-project a:active,.audio-player button:active { transform:scale(.97); }
+.audio-track { grid-template-columns:minmax(0,1fr); gap:10px; }
+.audio-track.is-playing::after { content:none; }
+.audio-player { display:flex; align-items:center; gap:12px; width:min(100%,530px); }
+.audio-player button {
+  display:grid; place-items:center; flex:none; width:44px; height:44px;
+  cursor:pointer; color:#d4e2ff; border:1px solid #47546b; background:#202a3b; border-radius:50%;
+  transition: transform 160ms var(--settle), background 160ms;
+}
+.audio-player button:hover { background:#324563; }
+.audio-player .volume { background:transparent; border-color:transparent; }
+.audio-player svg { width:19px; height:19px; fill:currentColor; }
+.transport path { transition:opacity 140ms; }
+.pause-shape,.silent,.is-playing .play-shape,.muted .waves { opacity:0; }
+.is-playing .pause-shape,.muted .silent { opacity:1; }
+.audio-player .time { font-weight:500; line-height:1.25; font-size:12px; font-variant-numeric:tabular-nums; color:#cad4e6; white-space:nowrap; }
+.audio-player input {
+  flex:1; min-width:12px; height:32px; margin:0; cursor:pointer; appearance:none;
+  background:linear-gradient(to right,#9dbbfa var(--played,0%),#374359 0) center / 100% 4px no-repeat;
+}
+.audio-player input::-webkit-slider-thumb { appearance:none; width:12px; height:12px; border-radius:50%; background:#d9e6ff; }
+.audio-player input::-moz-range-thumb { width:12px; height:12px; border:0; border-radius:50%; background:#d9e6ff; }
+.audio-player input:disabled { opacity:.65; cursor:default; }
+:where(a,button,input):focus-visible { outline:2px solid #bdd6ff; outline-offset:3px; }
+@media (max-width:400px) { .audio-player { gap:6px; } }
