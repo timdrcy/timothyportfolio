@@ -3,75 +3,67 @@
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
   const root = document.documentElement;
   const home = url => /\/(?:index\.html)?$/.test(new URL(url).pathname);
-  function direction(from, to, backward) {
-    if (home(to)) return 'return';
-    if (home(from)) return 'open';
-    return backward ? 'previous' : 'next';
+  // Slide a two-layer sheet across the actual page. The covered midpoint is
+  // the only moment we navigate, so plain file links and hosted links match.
+  function curtainArt(src) {
+    if (src) root.style.setProperty('--route-art', 'url("' + new URL(src, document.baseURI).href + '")');
+    else root.style.removeProperty('--route-art');
   }
+  const bannerArt = document.querySelector('.banner-art img')?.getAttribute('src');
+  curtainArt(bannerArt);
+  let departing = false;
+  const wipe = document.querySelector('.route-curtain');
+  function clearMotion() {
+    departing = false;
+    document.querySelector('.route-source')?.classList.remove('route-source');
+    curtainArt(bannerArt);
+    delete root.dataset.departure;
+    delete root.dataset.arrival;
+  }
+  function settleArrival() {
+    setTimeout(() => { if (!departing) delete root.dataset.arrival; }, 560);
+  }
+  if (root.dataset.arrival) settleArrival();
 
-  // Let the browser own history, scroll restoration and both page snapshots.
-  function prepareSnapshot(event, arriving) {
-    const transition = event.viewTransition;
-    if (!transition) return;
-    const activation = event.activation || window.navigation?.activation;
-    if (!activation?.from?.url || !activation.entry?.url || motion.matches) {
-      transition.skipTransition();
-      return;
+  document.addEventListener('click', event => {
+    const link = event.target.closest('a[href]');
+    if (!wipe || motion.matches || !link || event.defaultPrevented || event.button !== 0 ||
+      event.altKey || event.ctrlKey || event.metaKey || event.shiftKey ||
+      (link.target && link.target !== '_self') || link.hasAttribute('download')) return;
+    const url = new URL(link.href, document.baseURI);
+    if (url.origin !== location.origin || url.protocol !== location.protocol ||
+      !url.pathname.endsWith('.html') || url.pathname === location.pathname) return;
+    event.preventDefault();
+    if (departing) return;
+    departing = true;
+    delete root.dataset.arrival;
+    const route = home(url.href) ? 'return' : home(location.href) ? 'open' : 'next';
+    curtainArt(link.querySelector('img')?.getAttribute('src') || link.dataset.art);
+    link.classList.add('route-source');
+    root.dataset.departure = route;
+    const go = () => {
+      clearTimeout(fallback);
+      wipe.removeEventListener('animationend', covered);
+      if (!window.name) window.name = 'td-motion:' + route;
+      location.assign(url.href);
+    };
+    const covered = e => {
+      if (e.target === wipe && !e.pseudoElement && e.animationName === 'cover-route') go();
+    };
+    const fallback = setTimeout(go, 340);
+    wipe.addEventListener('animationend', covered);
+  });
+
+  // Returning via browser history restores scroll and clears a cached exit sheet.
+  addEventListener('pageshow', event => {
+    if (event.persisted || performance.getEntriesByType('navigation')[0]?.type === 'back_forward') {
+      clearMotion();
+      if (!motion.matches) {
+        root.dataset.arrival = home(location.href) ? 'return' : 'open';
+        settleArrival();
+      }
     }
-    const { from, entry } = activation;
-    root.dataset.route = direction(from.url, entry.url, activation.navigationType === 'traverse' && entry.index < from.index);
-    const other = new URL(arriving ? from.url : entry.url);
-    const artwork = document.body.classList.contains('home-page')
-      ? [...document.querySelectorAll('.project-card, .float-card')].filter(link => {
-          const rect = link.getBoundingClientRect();
-          return new URL(link.href).pathname === other.pathname && rect.bottom > 0 && rect.top < innerHeight;
-        }).sort((a,b) => Number(b === document.activeElement) - Number(a === document.activeElement))[0]?.querySelector('img')
-      : document.querySelector('.banner-art img');
-    const share = artwork?.naturalWidth && home(from.url) !== home(entry.url);
-    if (share) artwork.style.viewTransitionName = 'game-art';
-    transition.finished.finally(() => {
-      if (share) artwork.style.removeProperty('view-transition-name');
-      delete root.dataset.route;
-    });
-  }
-  addEventListener('pageswap', event => prepareSnapshot(event, false));
-  addEventListener('pagereveal', event => prepareSnapshot(event, true));
-
-  // Use the same axes for direct file previews and browsers without page snapshots.
-  if (location.protocol === 'file:' || !('onpagereveal' in window && 'onpageswap' in window)) {
-    const offsets = { open:[0,1], return:[0,-1], next:[1,0], previous:[-1,0] };
-    const prefix = 'portfolio-arrival/';
-    let leaving = false;
-    document.addEventListener('click', event => {
-      const link = event.target.closest('a[href]');
-      if (!link || event.defaultPrevented || event.button || event.ctrlKey || event.metaKey ||
-          event.shiftKey || event.altKey || link.target || link.hasAttribute('download') || motion.matches) return;
-      const target = new URL(link.href);
-      if (target.host !== location.host || target.protocol !== location.protocol ||
-          target.pathname === location.pathname || !target.pathname.endsWith('.html')) return;
-      event.preventDefault();
-      if (leaving) return;
-      leaving = true;
-      const route = direction(location.href, target.href, false);
-      if (!window.name) window.name = prefix + route;
-      const [x,y] = offsets[route];
-      document.querySelector('main')?.animate([
-        {transform:'none',opacity:1}, {transform:`translate(${-28*x}px,${-28*y}px)`,opacity:.52}
-      ], {duration:165,fill:'forwards',easing:'ease-in'});
-      setTimeout(() => location.assign(target.href), 165);
-    });
-    addEventListener('pageshow', event => {
-      leaving = false;
-      const main = document.querySelector('main');
-      if (event.persisted) main?.getAnimations().forEach(animation => animation.cancel());
-      const stored = window.name.startsWith(prefix) ? window.name.slice(prefix.length) : '';
-      if (stored) window.name = '';
-      if (motion.matches || !main) return;
-      const [x,y] = offsets[stored] || (home(location.href) ? offsets.return : offsets.open);
-      main.animate([{opacity:.6,transform:`translate(${40*x}px,${40*y}px)`},{opacity:1,transform:'none'}],
-        {duration:340,easing:'cubic-bezier(.16,.8,.2,1)'});
-    });
-  }
+  });
 
   // One-time scroll reveals, each element visibly lifting rather than fading
   // imperceptibly. A group of five project cards cascades left to right.
@@ -104,7 +96,7 @@
 
   // A genuinely sliding segmented switch with content movement AND a smooth
   // height change when switching between the longer and shorter panels.
-  document.querySelectorAll('.segmented').forEach(group => {
+  document.querySelectorAll('.material-switch').forEach(group => {
     const buttons = [...group.querySelectorAll('[role="tab"]')];
     const viewport = group.closest('.project-main')?.querySelector('.tab-viewport');
     let heightTimer = 0;
@@ -129,7 +121,7 @@
           panel.classList.toggle('is-active', active);
         }
       });
-      group.classList.toggle('sound-selected', id === 'sound');
+      group.dataset.selected = id;
       if (focus) chosen.focus();
       group.closest('main')?.querySelectorAll('video').forEach(video => {
         if (video.closest('[hidden]')) video.pause();
