@@ -4,37 +4,39 @@
   // This works with file URLs without fetching or reading another document.
   const embedded = window.parent !== window;
   const home = url => /\/(index\.html)?$/.test(new URL(url).pathname);
-  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-  const picker = document.querySelector('.motion-choice');
-  let preference = 'system';
-  try { preference = localStorage.getItem('td-motion-choice') || 'system'; } catch (_) {}
-  // Direct file previews can give each HTML file a separate storage area.
-  const incoming = new URL(location.href).searchParams.get('motion');
-  if (location.protocol === 'file:' && ['system','full','reduce'].includes(incoming)) preference = incoming;
-  if (picker) picker.value = preference;
-  const motion = { get matches() { return preference === 'reduce' || (preference !== 'full' && reduced.matches); } };
-  function applyPreference() {
-    document.documentElement.dataset.motion = motion.matches ? 'reduce' : 'full';
-    if (location.protocol === 'file:') {
-      for (const link of document.querySelectorAll('a[href]')) {
-        const target = new URL(link.href);
-        if (target.protocol !== 'file:' || target.pathname === location.pathname || !target.pathname.endsWith('.html')) continue;
-        target.searchParams.set('motion', preference);
-        link.href = target.href;
+  // Lift independently painted layers as the destination crosses the viewport.
+  function liftLayers(entering) {
+    const groups = [
+      ['.banner-art, .hero-showcase, .project-card .card-art', 0, 42],
+      ['.banner-title h1, .hero-copy h1, .section-heading, .project-breadcrumb', 65, 58],
+      ['.banner-title p, .hero-role, .card-bottom, .about-copy', 120, 38],
+      ['.project-lead, .primary-button, .project-info-grid > *, .next-project', 165, 30]
+    ];
+    const animations = [];
+    for (const [selector, delay, distance] of groups) {
+      for (const node of document.querySelectorAll(selector)) {
+        const rect = node.getBoundingClientRect();
+        if (!rect.height || rect.bottom < 0 || rect.top > innerHeight) continue;
+        const offset = Math.min(distance, innerHeight * .08);
+        const frames = entering
+          ? [{translate:'0 ' + offset + 'px',opacity:.22},{translate:'0 0',opacity:1}]
+          : [{translate:'0 0',opacity:1},{translate:'0 -' + offset + 'px',opacity:.5}];
+        animations.push(node.animate(frames, {
+          duration:entering ? 415 : 315, delay:entering ? delay + 65 : delay / 2,
+          easing:'cubic-bezier(.22,.74,.18,1)', fill:'both'
+        }));
       }
     }
-    const source = document.querySelector('.home-sky source');
-    if (source) source.media = motion.matches ? 'all' : 'not all';
+    return animations;
   }
-  applyPreference();
-  reduced.addEventListener('change', applyPreference);
-  picker?.addEventListener('change', () => {
-    preference = picker.value;
-    try { localStorage.setItem('td-motion-choice', preference); } catch (_) {}
-    applyPreference();
-  });
   if (embedded) {
     document.documentElement.classList.add('slide-preview');
+    let lifted = false;
+    addEventListener('message', event => {
+      if (lifted || event.source !== parent || event.data !== 'td-slide-enter') return;
+      lifted = true;
+      liftLayers(true);
+    });
     requestAnimationFrame(() => parent.postMessage('td-page-painted', '*'));
   }
   let pending = null;
@@ -52,9 +54,9 @@
     slide.started = true;
     clearTimeout(slide.readyTimer);
     const {frame, url, direction} = slide;
-    const start = direction === 'open' ? '0,100%' : direction === 'return' ? '0,-100%' : '100%,0';
-    const end = direction === 'open' ? '0,-18vh' : direction === 'return' ? '0,18vh' : '-18vw,0';
-    const curve = {duration:550, easing:'cubic-bezier(.52,.02,.17,1)', fill:'both'};
+    const start = direction === 'return' ? '0,-100%' : '0,100%';
+    const end = direction === 'return' ? '0,12vh' : '0,-12vh';
+    const curve = {duration:490, endDelay:205, easing:'cubic-bezier(.52,.02,.17,1)', fill:'both'};
     const commit = () => {
       if (pending !== slide || slide.committed) return;
       slide.committed = true;
@@ -64,6 +66,8 @@
     try {
       const page = frame.animate([{transform:'translate(' + start + ')'}, {transform:'translate(0,0)'}],curve);
       slide.animations.push(page);
+      frame.contentWindow.postMessage('td-slide-enter','*');
+      slide.animations.push(...liftLayers(false));
       frame.style.visibility = 'visible';
       for (const region of document.querySelectorAll('body > header,body > main,body > footer')) {
         slide.animations.push(region.animate([{transform:'none',opacity:1},{transform:'translate(' + end + ')',opacity:.45}],curve));
@@ -72,7 +76,7 @@
     } catch (_) {
       commit();
     } finally {
-      slide.finishTimer = setTimeout(commit, 615);
+      slide.finishTimer = setTimeout(commit, 770);
     }
   }
   addEventListener('message', event => {
@@ -80,7 +84,7 @@
   });
   document.addEventListener('click', event => {
     const link = event.target.closest('a[href]');
-    if (embedded || !link || event.defaultPrevented || event.button !== 0 || motion.matches ||
+    if (embedded || !link || event.defaultPrevented || event.button !== 0 ||
         event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || link.hasAttribute('download') ||
         (link.target && link.target !== '_self') || !Element.prototype.animate) return;
     const url = new URL(link.href);
@@ -111,8 +115,9 @@
   });
   addEventListener('pagehide',stopSlide);
   addEventListener('pageshow', event => {
-    if (embedded || motion.matches || !Element.prototype.animate) return;
+    if (embedded || !Element.prototype.animate) return;
     if (event.persisted || performance.getEntriesByType('navigation')[0]?.type === 'back_forward') {
+      liftLayers(true).forEach(a => { a.onfinish = () => a.cancel(); });
       const offset = home(location.href) ? '-16vh' : '16vh';
       document.querySelector('main')?.animate([{transform:'translateY('+offset+')',opacity:.5},{transform:'none',opacity:1}],
         {duration:460,easing:'cubic-bezier(.2,.72,.22,1)'});
@@ -122,14 +127,14 @@
   // A quick tap remains visible after the pointer is released.
   document.addEventListener('click', event => {
     const control = event.target.closest('.material-tab,.transport,.volume,.primary-button,.gallery-item,.next-project a,.project-card,.float-card');
-    if (!control || motion.matches || !control.animate) return;
+    if (!control || !control.animate) return;
     control.animate([{scale:'.955'},{scale:'1.018',offset:.65},{scale:'1'}],
       {duration:290,easing:'cubic-bezier(.22,.68,.3,1)'});
   });
 
   // One-time scroll reveals, each element visibly lifting rather than fading
   // imperceptibly. A group of five project cards cascades left to right.
-  if (!embedded && !motion.matches && 'IntersectionObserver' in window) {
+  if (!embedded && 'IntersectionObserver' in window) {
     const reveal = document.querySelectorAll(
       '.projects-section .section-heading, .project-card, .about-section .section-heading, .about-card, ' +
       '.project-info-grid .content-block, .screenshots-block, .sound-heading, .audio-track, .next-project'
@@ -172,7 +177,7 @@
       if (!next || chosen.classList.contains('is-active')) return;
       const oldHeight = viewport?.getBoundingClientRect().height || 0;
       // Lock the previous height before changing hidden panels.
-      if (viewport && !motion.matches) {
+      if (viewport) {
         viewport.style.height = `${oldHeight}px`;
         viewport.classList.add('is-switching');
       }
@@ -191,7 +196,7 @@
       const start = getComputedStyle(thumb).transform;
       thumb.getAnimations().forEach(animation => animation.cancel());
       group.dataset.selected = id;
-      if (!motion.matches && thumb.animate) {
+      if (thumb.animate) {
         const end = id === 'sound' ? 'translateX(100%)' : 'translateX(0)';
         thumb.animate([{transform:start},{transform:end}], {
           duration:410, easing:'cubic-bezier(.22,.75,.2,1.06)'
@@ -205,7 +210,7 @@
       document.querySelectorAll('.audio-track audio').forEach(audio => {
         if (!audio.closest('.tab-panel.is-active')) audio.pause();
       });
-      if (viewport && !motion.matches) {
+      if (viewport) {
         const targetHeight = next.offsetHeight + parseFloat(getComputedStyle(viewport).paddingTop);
         requestAnimationFrame(() => { viewport.style.height = `${targetHeight}px`; });
         clearTimeout(heightTimer);

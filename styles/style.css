@@ -14,7 +14,7 @@
 @media(max-width:1050px){.wrap{width:min(100% - 48px,1256px)}.project-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.hero-copy h1{font-size:clamp(60px,7vw,86px)}.float-card{height:215px}.float-ice{height:245px}.project-info-grid{gap:25px}.project-banner{height:290px}}
 @media(max-width:680px){.wrap{width:calc(100% - 32px)}.site-header{padding-top:16px}.brand-name{display:none}.main-nav{gap:24px}.main-nav a{font-size:13px}.home-hero{grid-template-columns:1fr;min-height:0;padding-top:22px}.hero-copy{padding:16px 8px 4px}.hero-copy h1{font-size:clamp(60px,13vw,85px)}.hero-summary{max-width:100%}.hero-showcase{height:255px;min-height:0;margin:8px -4px 12px}.float-card{height:175px;width:42%;top:15%}.float-dad{left:4%}.float-ice{left:31%;width:42%;height:205px;top:4%}.float-demure{left:69%}.projects-section{padding-top:10px}.project-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.card-bottom{padding:12px 10px}.card-bottom small{font-size:9px}.card-bottom strong{font-size:14px}.card-arrow{display:none}.section-heading h2{font-size:32px}.about-section{padding-top:18px}.about-card{grid-template-columns:1fr;padding:22px;gap:20px}.portrait-slot{height:180px;width:170px}.site-footer{flex-direction:column}.project-banner{height:250px}.banner-art{left:20%}.banner-ink{width:74%}.banner-title{padding:22px;max-width:82%}.project-banner h1{font-size:clamp(44px,10vw,72px)}.project-lead{flex-direction:column;align-items:stretch}.segmented{align-self:flex-start}.project-info-grid{grid-template-columns:1fr;gap:26px}.contributions{grid-row:2}.project-gallery{grid-template-columns:repeat(2,minmax(0,1fr))}.screenshots-heading{align-items:flex-start;flex-direction:column;gap:4px;margin-bottom:12px}.audio-track{grid-template-columns:1fr;gap:10px}.sound-heading{align-items:flex-start}.sound-number{white-space:nowrap}}
 @media(max-width:380px){.project-grid{grid-template-columns:1fr}.card-art{aspect-ratio:1.75}.float-card{height:140px}.float-ice{height:170px}.hero-showcase{height:215px}.project-banner h1{font-size:41px}.tab-button{min-width:96px;padding-inline:15px}}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}.page-wipe{display:none!important}}
+
 
 
 /* ============================================================================
@@ -240,12 +240,7 @@ body.home-page {
   .project-lead {padding-top:4px}
   .audio-track {margin-inline:0;padding-inline:10px}
 }
-@media(prefers-reduced-motion:reduce) {
-  .motion-enabled .reveal-item {opacity:1;translate:none}
-  .hero-copy > *, .float-card {animation:none!important}
-  ::view-transition-old(root),::view-transition-new(root) {animation-duration:.01ms!important}
-  .sound-bars i {animation:none!important}
-}
+
 
 /* Final viewport corrections after rendering on narrow screens. */
 .project-banner::before {bottom:0}
@@ -360,13 +355,7 @@ body.home-page {
   .site-footer a{font-size:15px}
 }
 @media(max-width:380px){.tab-button{min-width:115px;padding-inline:14px;font-size:14px}}
-@media(prefers-reduced-motion:reduce){
-  .page-wipe{display:none!important}
-  .float-card.is-bobbing,.audio-track.is-playing::after{animation:none!important}
-  body.is-departing .site-header,body.is-departing main,body.is-departing .site-footer{transform:none;opacity:1}
-  body.is-arriving .site-header,body.is-arriving main,body.is-arriving .site-footer{animation:none}
-  .motion-enabled .reveal-item{translate:none!important;opacity:1!important}
-}
+
 
 /* Final edge blending: feather the ENTIRE backdrop beyond the title area.
    There is no card edge, artificial crop line, or AI repaint of game art. */
@@ -392,18 +381,6 @@ body.home-page {
 .motion-enabled .reveal-item:focus-within { opacity:1; translate:none; }
 .project-card:active, .primary-button:active, .tab-button:active, .gallery-item:active { scale:.98; }
 .project-card, .primary-button, .tab-button, .gallery-item { transition-property: transform,scale,border-color,opacity,translate; }
-.next-project a {
-  display:grid; grid-template-columns:1fr 32px; gap:4px 28px;
-  align-items:center; padding:15px 20px; min-width:min(230px,100%);
-  color:#edf2ff; background:#151e30; border:1px solid #34425a; border-radius:14px;
-  transition:transform 220ms var(--settle),background 220ms,border-color 220ms;
-}
-.next-project small { font-size:11px; font-weight:600; color:#a8b6cf; letter-spacing:.06em; }
-.next-project strong { grid-row:2; font-size:18px; }
-.next-project svg { grid-column:2; grid-row:1/3; width:24px; transition:transform 240ms var(--settle); }
-.next-project a:hover { transform:translateY(-2px); color:white; border-color:#728ab4; background:#1d2b43; }
-.next-project a:hover svg { transform:translateX(4px); }
-.next-project a:active,.audio-player button:active { transform:scale(.97); }
 .audio-track { grid-template-columns:minmax(0,1fr); gap:10px; }
 .audio-track.is-playing::after { content:none; }
 .audio-player { display:flex; align-items:center; gap:12px; width:min(100%,530px); }
@@ -476,8 +453,39 @@ body.home-page { background:#050c18; isolation:isolate; }
 .slide-preview { scroll-behavior:auto; }
 :is(.slide-preview,.slide-landed) :is(.hero-copy > *, .float-card, .project-banner h1, .banner-title p, .project-lead, .project-breadcrumb) { animation:none!important; }
 .material-indicator { transition:none; }
-.motion-setting { display:inline-flex; gap:.5rem; align-items:center; font-size:12px; color:#b7c4d9; }
-.motion-choice { color:inherit; font:inherit; background:#141b28; border:1px solid #414e64; border-radius:6px; padding:4px 7px; }
-html[data-motion="reduce"] { scroll-behavior:auto; }
-html[data-motion="reduce"] *,html[data-motion="reduce"] *::before,html[data-motion="reduce"] *::after { animation-duration:.01ms!important; transition-duration:.01ms!important; animation-iteration-count:1!important; }
-html[data-motion="reduce"] .reveal-item { opacity:1; translate:none; }
+
+/* One control palette across the portfolio. The homepage cards retain their game colors. */
+:root { --control-blue:#92bfff; --project-accent:var(--control-blue); --violet:var(--control-blue); }
+.project-page .contributions li::before, .main-nav a::after, .site-footer a::after { background:var(--control-blue); }
+.main-nav a:hover,.site-footer a:hover,.about-links a:hover { color:var(--control-blue); }
+.primary-button { color:#101925; background:var(--control-blue); }
+.primary-button:hover { color:#091321; background:#aacfff; }
+.next-project a {
+  display:inline-flex; align-items:center; gap:14px; min-height:46px; max-width:100%;
+  padding:5px 6px 5px 18px; color:#f3f6fb; background:#101620;
+  border:1px solid #536781; border-radius:999px; box-shadow:none;
+  transition:background 160ms,border-color 160ms,color 160ms;
+}
+.next-project strong { font:800 13px/1.15 'Arial Narrow',Arial,sans-serif; text-transform:uppercase; letter-spacing:-.025em; }
+.next-project a .arrow-disc {
+  margin:0; flex:none; display:grid; place-items:center; width:32px; height:32px;
+  border-radius:50%; background:#253043; color:#f1f5ff; transition:background 160ms,color 160ms;
+}
+.next-project .arrow-disc svg { width:21px; height:21px; transition:transform 180ms var(--settle); }
+.next-project a:is(:hover,:focus-visible) { background:#101620; border-color:var(--control-blue); color:white; transform:none; }
+.next-project a:is(:hover,:focus-visible) .arrow-disc { color:#091421; background:var(--control-blue); }
+.next-project a:hover svg { transform:translateX(1px); }
+.next-project a:active { background:var(--control-blue); color:#08101a; opacity:1; }
+.next-project a:active .arrow-disc { background:#101620; color:white; }
+
+body.home-page,.home-sky { background:#06070a; }
+.home-sky::before { content:""; position:absolute; inset:-1%; background:url("../images/night-sky.webp") center / cover; animation:night-drift 42s ease-in-out infinite alternate; }
+.home-sky::after { content:none; }
+.home-sky i { position:absolute; top:18%; left:72%; width:2px; height:2px; background:#b7c9dd; border-radius:50%; animation:star-pulse 6s ease-in-out infinite alternate; }
+.home-sky i + i { top:62%; left:24%; width:1.5px; height:1.5px; animation-duration:8s; animation-delay:-4s; }
+@keyframes star-pulse { from {opacity:.1} to {opacity:.62} }
+@keyframes night-drift { to {transform:translate3d(.35%,.25%,0)} }
+.primary-button { border-color:#9ab8df; box-shadow:inset 0 1px #ffffff45,0 5px 16px #02050955; }
+.primary-button:hover { box-shadow:inset 0 1px #ffffff66,0 7px 20px #02050980; }
+.home-page .hero-halo { opacity:.32; }
+.home-page .hero-showcase::after { opacity:.28; }
