@@ -478,14 +478,77 @@ body.home-page { background:#050c18; isolation:isolate; }
 .next-project a:active { background:var(--control-blue); color:#08101a; opacity:1; }
 .next-project a:active .arrow-disc { background:#101620; color:white; }
 
+/* A single decoded sky texture drifts across the viewport. */
 body.home-page,.home-sky { background:#06070a; }
-.home-sky::before { content:""; position:absolute; inset:-1%; background:url("../images/night-sky.webp") center / cover; animation:night-drift 42s ease-in-out infinite alternate; }
+.home-sky::before {
+  content:""; position:absolute; inset:-26px;
+  background:url("../images/night-sky.webp") center / cover no-repeat;
+  animation:night-drift 9s ease-in-out infinite alternate;
+}
 .home-sky::after { content:none; }
-.home-sky i { position:absolute; top:18%; left:72%; width:2px; height:2px; background:#b7c9dd; border-radius:50%; animation:star-pulse 6s ease-in-out infinite alternate; }
-.home-sky i + i { top:62%; left:24%; width:1.5px; height:1.5px; animation-duration:8s; animation-delay:-4s; }
-@keyframes star-pulse { from {opacity:.1} to {opacity:.62} }
-@keyframes night-drift { to {transform:translate3d(.35%,.25%,0)} }
+@keyframes night-drift {
+  from { transform:translate3d(-15px,6px,0) rotate(-.18deg); }
+  to { transform:translate3d(16px,-7px,0) rotate(.18deg); }
+}
+.home-sky i {
+  position:absolute; top:18%; left:72%; width:2px; height:2px;
+  border-radius:50%; background:#bccee2; opacity:.23;
+  animation:star-pulse 4.7s ease-in-out infinite;
+}
+.home-sky i + i { top:62%; left:24%; animation-duration:6.3s; animation-delay:-2.1s; }
+@keyframes star-pulse {
+  0%,32%,75%,100% { opacity:.23; }
+  53% { opacity:.86; }
+}
 .primary-button { border-color:#9ab8df; box-shadow:inset 0 1px #ffffff45,0 5px 16px #02050955; }
 .primary-button:hover { box-shadow:inset 0 1px #ffffff66,0 7px 20px #02050980; }
 .home-page .hero-halo { opacity:.32; }
 .home-page .hero-showcase::after { opacity:.28; }
+
+/* Both snapshots use the same viewport width, including short sound panels. */
+html { overflow-y:scroll; scrollbar-gutter:stable; }
+html[data-travel="forward"] { --slide-from:100%; --slide-away:-16%; }
+html[data-travel="back"] { --slide-from:-100%; --slide-away:16%; }
+::view-transition-old(root) { animation:page-depart 520ms cubic-bezier(.52,.03,.18,1) both; }
+::view-transition-new(root) { animation:page-arrive 520ms cubic-bezier(.52,.03,.18,1) both; }
+@keyframes page-depart { to {transform:translateY(var(--slide-away)); opacity:.62;} }
+@keyframes page-arrive { from {transform:translateY(var(--slide-from));} }
+.brand-curtain { position:fixed; inset:0; z-index:99999; display:flex; overflow:hidden; pointer-events:none; }
+.brand-curtain i { flex:1; margin-right:-1px; transform:translateY(101%); background:linear-gradient(165deg,hsl(calc(213 + var(--column)*1.2) 67% calc(44% - var(--column)*2%)),#0d1e42 84%); }
+main[tabindex="-1"]:focus {outline:none;}
+/* Size the hero from the decoded artwork. Both sources include the entire scene. */
+.project-main.wrap:has(> .art-header) {
+  --reading-width: min(1256px, calc(100% - 72px));
+  width: 100%;
+}
+.project-main:has(> .art-header) > :not(.art-header) {
+  width: var(--reading-width);
+  margin-inline: auto;
+}
+.art-header { display:grid; align-items:center; position:relative; isolation:isolate; }
+.art-header > * { grid-area:1 / 1; }
+.art-header picture { display:block; width:100%; min-width:0; pointer-events:none;
+  mask-image:linear-gradient(0deg,transparent,#000 5%,#000 95%,transparent); }
+.art-header img { display:block; width:100%; height:auto; }
+.art-heading { position:relative; width:var(--reading-width); margin:auto; color:#fff; }
+.art-heading h1 { max-width:45%; margin:0 0 .16em; font-size:clamp(44px,6.7vw,93px);
+  font-weight:850; line-height:.93; letter-spacing:-.055em; }
+.art-heading p { margin:0; font-size:14px; }
+.art-header picture { mask-image:linear-gradient(0deg,transparent,#000 5%,#000 95%,transparent),
+  linear-gradient(90deg,#0003,#0005 27%,#000 56%); mask-composite:intersect; }
+@media(max-width:1050px) {
+  .project-main.wrap:has(> .art-header) { --reading-width:calc(100% - 48px); }
+}
+@media(max-width:680px) {
+  .project-main.wrap:has(> .art-header) { --reading-width:calc(100% - 32px); }
+  .art-header { display:block; }
+  .art-header picture { mask-image:linear-gradient(0deg,transparent,#000 6%,#000 96%,transparent); }
+  .art-heading { padding-block:12px; }
+  .art-heading h1 { max-width:100%; font-size:clamp(36px,8vw,52px); }
+}
+.audio-player .volume-level { flex:0 1 76px; width:76px; min-width:40px; }
+@media(max-width:520px) {
+
+  .audio-player { gap:6px; }
+  .audio-player .volume-level { flex-basis:50px; }
+}
