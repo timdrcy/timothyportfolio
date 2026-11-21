@@ -1,73 +1,135 @@
 "use strict";
 (() => {
-  const motion = matchMedia('(prefers-reduced-motion: reduce)');
-  const root = document.documentElement;
-  const home = url => /\/(?:index\.html)?$/.test(new URL(url).pathname);
-  // Slide a two-layer sheet across the actual page. The covered midpoint is
-  // the only moment we navigate, so plain file links and hosted links match.
-  function curtainArt(src) {
-    if (src) root.style.setProperty('--route-art', 'url("' + new URL(src, document.baseURI).href + '")');
-    else root.style.removeProperty('--route-art');
-  }
-  const bannerArt = document.querySelector('.banner-art img')?.getAttribute('src');
-  curtainArt(bannerArt);
-  let departing = false;
-  const wipe = document.querySelector('.route-curtain');
-  function clearMotion() {
-    departing = false;
-    document.querySelector('.route-source')?.classList.remove('route-source');
-    curtainArt(bannerArt);
-    delete root.dataset.departure;
-    delete root.dataset.arrival;
-  }
-  function settleArrival() {
-    setTimeout(() => { if (!departing) delete root.dataset.arrival; }, 560);
-  }
-  if (root.dataset.arrival) settleArrival();
-
-  document.addEventListener('click', event => {
-    const link = event.target.closest('a[href]');
-    if (!wipe || motion.matches || !link || event.defaultPrevented || event.button !== 0 ||
-      event.altKey || event.ctrlKey || event.metaKey || event.shiftKey ||
-      (link.target && link.target !== '_self') || link.hasAttribute('download')) return;
-    const url = new URL(link.href, document.baseURI);
-    if (url.origin !== location.origin || url.protocol !== location.protocol ||
-      !url.pathname.endsWith('.html') || url.pathname === location.pathname) return;
-    event.preventDefault();
-    if (departing) return;
-    departing = true;
-    delete root.dataset.arrival;
-    const route = home(url.href) ? 'return' : home(location.href) ? 'open' : 'next';
-    curtainArt(link.querySelector('img')?.getAttribute('src') || link.dataset.art);
-    link.classList.add('route-source');
-    root.dataset.departure = route;
-    const go = () => {
-      clearTimeout(fallback);
-      wipe.removeEventListener('animationend', covered);
-      if (!window.name) window.name = 'td-motion:' + route;
-      location.assign(url.href);
-    };
-    const covered = e => {
-      if (e.target === wipe && !e.pseudoElement && e.animationName === 'cover-route') go();
-    };
-    const fallback = setTimeout(go, 340);
-    wipe.addEventListener('animationend', covered);
-  });
-
-  // Returning via browser history restores scroll and clears a cached exit sheet.
-  addEventListener('pageshow', event => {
-    if (event.persisted || performance.getEntriesByType('navigation')[0]?.type === 'back_forward') {
-      clearMotion();
-      if (!motion.matches) {
-        root.dataset.arrival = home(location.href) ? 'return' : 'open';
-        settleArrival();
+  // The destination renders in a temporary viewport using its own HTML and media.
+  // This works with file URLs without fetching or reading another document.
+  const embedded = window.parent !== window;
+  const home = url => /\/(index\.html)?$/.test(new URL(url).pathname);
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+  const picker = document.querySelector('.motion-choice');
+  let preference = 'system';
+  try { preference = localStorage.getItem('td-motion-choice') || 'system'; } catch (_) {}
+  // Direct file previews can give each HTML file a separate storage area.
+  const incoming = new URL(location.href).searchParams.get('motion');
+  if (location.protocol === 'file:' && ['system','full','reduce'].includes(incoming)) preference = incoming;
+  if (picker) picker.value = preference;
+  const motion = { get matches() { return preference === 'reduce' || (preference !== 'full' && reduced.matches); } };
+  function applyPreference() {
+    document.documentElement.dataset.motion = motion.matches ? 'reduce' : 'full';
+    if (location.protocol === 'file:') {
+      for (const link of document.querySelectorAll('a[href]')) {
+        const target = new URL(link.href);
+        if (target.protocol !== 'file:' || target.pathname === location.pathname || !target.pathname.endsWith('.html')) continue;
+        target.searchParams.set('motion', preference);
+        link.href = target.href;
       }
     }
+    const source = document.querySelector('.home-sky source');
+    if (source) source.media = motion.matches ? 'all' : 'not all';
+  }
+  applyPreference();
+  reduced.addEventListener('change', applyPreference);
+  picker?.addEventListener('change', () => {
+    preference = picker.value;
+    try { localStorage.setItem('td-motion-choice', preference); } catch (_) {}
+    applyPreference();
+  });
+  if (embedded) {
+    document.documentElement.classList.add('slide-preview');
+    requestAnimationFrame(() => parent.postMessage('td-page-painted', '*'));
+  }
+  let pending = null;
+  function stopSlide() {
+    if (!pending) return;
+    clearTimeout(pending.readyTimer);
+    clearTimeout(pending.finishTimer);
+    pending.animations.forEach(animation => animation.cancel());
+    pending.frame.remove();
+    pending = null;
+  }
+  function enterSlide() {
+    const slide = pending;
+    if (!slide || slide.started) return;
+    slide.started = true;
+    clearTimeout(slide.readyTimer);
+    const {frame, url, direction} = slide;
+    const start = direction === 'open' ? '0,100%' : direction === 'return' ? '0,-100%' : '100%,0';
+    const end = direction === 'open' ? '0,-18vh' : direction === 'return' ? '0,18vh' : '-18vw,0';
+    const curve = {duration:550, easing:'cubic-bezier(.52,.02,.17,1)', fill:'both'};
+    const commit = () => {
+      if (pending !== slide || slide.committed) return;
+      slide.committed = true;
+      if (!window.name) window.name = 'td-painted';
+      location.assign(url.href);
+    };
+    try {
+      const page = frame.animate([{transform:'translate(' + start + ')'}, {transform:'translate(0,0)'}],curve);
+      slide.animations.push(page);
+      frame.style.visibility = 'visible';
+      for (const region of document.querySelectorAll('body > header,body > main,body > footer')) {
+        slide.animations.push(region.animate([{transform:'none',opacity:1},{transform:'translate(' + end + ')',opacity:.45}],curve));
+      }
+      page.onfinish = commit;
+    } catch (_) {
+      commit();
+    } finally {
+      slide.finishTimer = setTimeout(commit, 615);
+    }
+  }
+  addEventListener('message', event => {
+    if (pending && event.source === pending.frame.contentWindow && event.data === 'td-page-painted') enterSlide();
+  });
+  document.addEventListener('click', event => {
+    const link = event.target.closest('a[href]');
+    if (embedded || !link || event.defaultPrevented || event.button !== 0 || motion.matches ||
+        event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || link.hasAttribute('download') ||
+        (link.target && link.target !== '_self') || !Element.prototype.animate) return;
+    const url = new URL(link.href);
+    if (url.protocol !== location.protocol || (url.protocol !== 'file:' && url.origin !== location.origin) ||
+        url.pathname === location.pathname || !url.pathname.endsWith('.html')) return;
+    event.preventDefault();
+    if (pending) return;
+    const frame = document.createElement('iframe');
+    frame.className = 'destination-slide';
+    frame.tabIndex = -1;
+    frame.inert = true;
+    frame.title = 'Page transition';
+    frame.setAttribute('aria-hidden','true');
+    frame.src = url.href;
+    pending = {frame, url, direction:home(url.href) ? 'return' : home(location.href) ? 'open' : 'next', animations:[]};
+    frame.addEventListener('load',enterSlide,{once:true});
+    // Slow or unavailable resources must never strand a navigation.
+    pending.readyTimer = setTimeout(() => {
+      // Frame embedding can be restricted by hosting settings; animate the real
+      // current page before following its normal link in that case.
+      const main = document.querySelector('main');
+      main?.animate([{opacity:1,transform:'none'},{opacity:.25,transform:'translateY(-48px)'}],
+        {duration:220, easing:'ease-in', fill:'both'});
+      stopSlide();
+      setTimeout(() => location.assign(url.href), 225);
+    }, 1000);
+    document.body.append(frame);
+  });
+  addEventListener('pagehide',stopSlide);
+  addEventListener('pageshow', event => {
+    if (embedded || motion.matches || !Element.prototype.animate) return;
+    if (event.persisted || performance.getEntriesByType('navigation')[0]?.type === 'back_forward') {
+      const offset = home(location.href) ? '-16vh' : '16vh';
+      document.querySelector('main')?.animate([{transform:'translateY('+offset+')',opacity:.5},{transform:'none',opacity:1}],
+        {duration:460,easing:'cubic-bezier(.2,.72,.22,1)'});
+    }
+  });
+
+  // A quick tap remains visible after the pointer is released.
+  document.addEventListener('click', event => {
+    const control = event.target.closest('.material-tab,.transport,.volume,.primary-button,.gallery-item,.next-project a,.project-card,.float-card');
+    if (!control || motion.matches || !control.animate) return;
+    control.animate([{scale:'.955'},{scale:'1.018',offset:.65},{scale:'1'}],
+      {duration:290,easing:'cubic-bezier(.22,.68,.3,1)'});
   });
 
   // One-time scroll reveals, each element visibly lifting rather than fading
   // imperceptibly. A group of five project cards cascades left to right.
-  if (!motion.matches && 'IntersectionObserver' in window) {
+  if (!embedded && !motion.matches && 'IntersectionObserver' in window) {
     const reveal = document.querySelectorAll(
       '.projects-section .section-heading, .project-card, .about-section .section-heading, .about-card, ' +
       '.project-info-grid .content-block, .screenshots-block, .sound-heading, .audio-track, .next-project'
@@ -75,6 +137,10 @@
     document.documentElement.classList.add('motion-enabled');
     reveal.forEach((element, i) => {
       element.classList.add('reveal-item');
+      if (document.documentElement.classList.contains('slide-landed')) {
+        const bounds = element.getBoundingClientRect();
+        if (bounds.height && bounds.bottom > 0 && bounds.top < innerHeight) element.classList.add('is-seen');
+      }
       if (element.matches('.project-card')) {
         const projectIndex = [...element.parentElement.children].indexOf(element);
         element.style.setProperty('--reveal-delay', `${Math.min(projectIndex, 5) * 45}ms`);
@@ -121,7 +187,16 @@
           panel.classList.toggle('is-active', active);
         }
       });
+      const thumb = group.querySelector('.material-indicator');
+      const start = getComputedStyle(thumb).transform;
+      thumb.getAnimations().forEach(animation => animation.cancel());
       group.dataset.selected = id;
+      if (!motion.matches && thumb.animate) {
+        const end = id === 'sound' ? 'translateX(100%)' : 'translateX(0)';
+        thumb.animate([{transform:start},{transform:end}], {
+          duration:410, easing:'cubic-bezier(.22,.75,.2,1.06)'
+        });
+      }
       if (focus) chosen.focus();
       group.closest('main')?.querySelectorAll('video').forEach(video => {
         if (video.closest('[hidden]')) video.pause();
